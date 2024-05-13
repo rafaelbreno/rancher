@@ -1,0 +1,29 @@
+name: Build PR
+name-run: Build PR
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master 
+      - release/v*
+      - refs/tags/v*
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - master 
+      - release/v*
+
+jobs:
+  build-windows-1809:
+    name: Build for windows-1809
+    runs-on: windows-2019
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Docker Engine (buildx)
+        uses: docker/setup-buildx-actions@v1
+
+      - name: Run Build
+        run: dapper.exe -f Dockerfile-windows.dapper -d ci
