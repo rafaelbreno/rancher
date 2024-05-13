@@ -1,5 +1,5 @@
 name: Build PR
-name-run: Build PR
+
 on:
   workflow_dispatch:
   push:
