@@ -27,7 +27,8 @@ jobs:
         shell: pwsh
 
       - name: Verify Dapper installation
-        run: $env:DAPPER_PATH --version
+        run: |
+          Invoke-Expression "$env:DAPPER_PATH --version"
         shell: pwsh
 
       - name: Run Build
