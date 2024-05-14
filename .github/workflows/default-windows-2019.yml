@@ -10,8 +10,6 @@ jobs:
   build-pr:
     name: Build for Windows Server 2019
     runs-on: windows-2019
-    container:
-      image: rancher/dapper:v0.6.0
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
