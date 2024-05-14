@@ -20,10 +20,15 @@ jobs:
       - name: Install Dapper
         run: |
           Invoke-WebRequest -Uri "https://github.com/rancher/dapper/releases/download/v0.6.0/dapper-Windows-x86_64.exe" -OutFile "C:\ProgramData\dapper.exe"
-          [System.Environment]::SetEnvironmentVariable('PATH', $env:PATH + ';C:\ProgramData', [System.EnvironmentVariableTarget]::Process)
+        shell: pwsh
 
-      - name: Verify Dapper Installation
-        run: dapper.exe --version
+      - name: Set Dapper Path
+        run: echo "DAPPER_PATH=C:\ProgramData\dapper.exe" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Verify Dapper installation
+        run: $env:DAPPER_PATH --version
+        shell: pwsh
 
       - name: Run Build
         run: dapper.exe -f Dockerfile-windows.dapper -d ci
