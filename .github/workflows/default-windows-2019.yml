@@ -14,8 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Echo Docker version
-        run: docker.exe --version
+      - name: Install Dapper
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/rancher/dapper/releases/download/v0.6.0/dapper-windows-386.exe" -OutFile "dapper.exe"
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          ./dapper.exe --version
 
       - name: Run Build
         run: dapper.exe -f Dockerfile-windows.dapper -d ci
