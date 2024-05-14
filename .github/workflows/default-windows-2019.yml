@@ -14,8 +14,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Echo Docker version
+        run: docker.exe --version
 
       - name: Run Build
         run: dapper.exe -f Dockerfile-windows.dapper -d ci
