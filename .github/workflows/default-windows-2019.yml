@@ -1,0 +1,22 @@
+name: Build PR (Windows Server 2019)
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master 
+      - release/v*
+
+jobs:
+  build-pr:
+    name: Build for Windows Server 2019
+    runs-on: windows-2019
+    container:
+      image: rancher/dapper:v0.6.0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Build
+        run: dapper.exe -f Dockerfile-windows.dapper -d ci
+        env:
+          DOCKER_HOST: npipe:////./pipe/docker_engine
