@@ -19,7 +19,7 @@ jobs:
 
       - name: Install Dapper
         run: |
-          Invoke-WebRequest -Uri "https://github.com/rancher/dapper/releases/download/v0.6.0/dapper-0.6.0-windows-amd64.exe" -OutFile "dapper.exe"
+          Invoke-WebRequest -Uri "https://github.com/rancher/dapper/releases/download/v0.6.0/dapper-Windows-x86_64.exe" -OutFile "dapper.exe"
           Move-Item -Path ".\dapper.exe" -Destination "$env:ProgramFiles\Docker\Docker\resources\bin\dapper.exe"
 
       - name: Verify Dapper Installation
