@@ -33,7 +33,7 @@ jobs:
 
       - name: Run Build
         run: |
-          Invoke-Expression "$env:DAPPER_PATH -f Dockerfile-windows.dapper -d ci
+          Invoke-Expression "$env:DAPPER_PATH -f Dockerfile-windows.dapper -d ci"
         shell: pwsh
         env:
           DOCKER_HOST: npipe:////./pipe/docker_engine
