@@ -14,16 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Echo Docker version
-        run: docker.exe --version
-
       - name: Install Dapper
         run: |
           Invoke-WebRequest -Uri "https://github.com/rancher/dapper/releases/download/v0.6.0/dapper-Windows-x86_64.exe" -OutFile "C:\ProgramData\dapper.exe"
-        shell: pwsh
-
-      - name: Set Dapper Path
-        run: echo "DAPPER_PATH=C:\ProgramData\dapper.exe" >> $env:GITHUB_ENV
+          echo "DAPPER_PATH=C:\ProgramData\dapper.exe" >> $env:GITHUB_ENV
         shell: pwsh
 
       - name: Verify Dapper installation
@@ -35,5 +29,3 @@ jobs:
         run: |
           Invoke-Expression "$env:DAPPER_PATH -f Dockerfile-windows.dapper -d ci"
         shell: pwsh
-        env:
-          DOCKER_HOST: npipe:////./pipe/docker_engine
