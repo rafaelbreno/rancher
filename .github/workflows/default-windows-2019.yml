@@ -15,7 +15,7 @@ on:
 jobs:
   build-pr:
     #if: github.event_name == "pull_request"
-    name: Build Pull Request for Windows Server 2019
+    name: Build Pull Request
     runs-on: windows-2019
     steps:
       - name: Checkout code
@@ -39,7 +39,7 @@ jobs:
 
   build-push-tag:
     #if: contains(fromJSON('["push", "tag"]'), github.event_name)
-    name: Build for Windows Server 2019
+    name: Build Pushed Tag
     runs-on: windows-2019
     steps:
       - name: Checkout code
@@ -59,11 +59,11 @@ jobs:
       - name: Run Build
         run: |
           Invoke-Expression "$env:DAPPER_PATH -f Dockerfile-windows.dapper -d ci"
-        shell: pws
+        shell: pwsh
 
       - name: Stage binaries
         run: |
           Copy-Item -Path .\bin\* -Destination .\package\windows\ -Recurse -Force
-        shell: pws
+        shell: pwsh
         env:
           DOCKER_HOST: npipe:////./pipe/docker_engine
