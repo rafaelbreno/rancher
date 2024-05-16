@@ -70,11 +70,14 @@ jobs:
 
   docker-publish:
     if: contains(fromJSON('["push", "tag"]'), github.event_name)
-    name: Build Pushed Tag
+    name: Publish pushed Tag
     runs-on: windows-2019
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
