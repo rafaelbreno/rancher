@@ -1,0 +1,69 @@
+name: Windows Server 2019
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master 
+      - release/v*
+  push:
+    branches:
+      - "master"
+      - "release/v*"
+    tag:
+      - "v*"
+
+jobs:
+  build-pr:
+    #if: github.event_name == "pull_request"
+    name: Build Pull Request for Windows Server 2019
+    runs-on: windows-2019
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Dapper
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/rancher/dapper/releases/download/v0.6.0/dapper-Windows-x86_64.exe" -OutFile "C:\ProgramData\dapper.exe"
+          echo "DAPPER_PATH=C:\ProgramData\dapper.exe" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Verify Dapper installation
+        run: |
+          Invoke-Expression "$env:DAPPER_PATH --version"
+        shell: pwsh
+
+      - name: Run Build
+        run: |
+          Invoke-Expression "$env:DAPPER_PATH -f Dockerfile-windows.dapper -d ci"
+        shell: pwsh
+
+  build-push-tag:
+    #if: contains(fromJSON('["push", "tag"]'), github.event_name)
+    name: Build for Windows Server 2019
+    runs-on: windows-2019
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Dapper
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/rancher/dapper/releases/download/v0.6.0/dapper-Windows-x86_64.exe" -OutFile "C:\ProgramData\dapper.exe"
+          echo "DAPPER_PATH=C:\ProgramData\dapper.exe" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Verify Dapper installation
+        run: |
+          Invoke-Expression "$env:DAPPER_PATH --version"
+        shell: pwsh
+
+      - name: Run Build
+        run: |
+          Invoke-Expression "$env:DAPPER_PATH -f Dockerfile-windows.dapper -d ci"
+        shell: pws
+
+      - name: Stage binaries
+        run: |
+          Copy-Item -Path .\bin\* -Destination .\package\windows\ -Recurse -Force
+        shell: pws
+        env:
+          DOCKER_HOST: npipe:////./pipe/docker_engine
