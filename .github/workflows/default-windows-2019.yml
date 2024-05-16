@@ -84,7 +84,6 @@ jobs:
 
       - name: Build and Push Docker Image - Head Agent
         if: github.ref_type == 'branch'
-        uses: 
         run: |
           docker build -f package/windows/Dockerfile.agent -t ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:head-agent-${{ github.ref_name }}-${{ github.sha }}-windows-2022 .
           docker push ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:head-agent-${{ github.ref_name }}-${{ github.sha }}-windows-2019
