@@ -84,7 +84,7 @@ jobs:
 
       - name: Build agent.exe
         run: |
-          pwsh -File build-agent.ps1
+          pwsh -File scripts/windows/build-agent.ps1
         shell: pwsh
 
       - name: Build and Push Docker Image - Head Agent
