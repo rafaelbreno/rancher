@@ -85,13 +85,13 @@ jobs:
       - name: Build and Push Docker Image - Head Agent
         if: startsWith(github.ref, 'refs/heads/')
         run: |
-          docker build -f package/windows/Dockerfile.agent -t ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:head-agent-${{ github.sha }}-windows-2019 .
+          docker build --build-arg SERVERCORE_VERSION=ltsc2019 -f package/windows/Dockerfile.agent -t ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:head-agent-${{ github.sha }}-windows-2019 .
           docker push ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:head-agent-${{ github.sha }}-windows-2019
         shell: bash
 
       - name: Build and Push Docker Image - Agent (Tag)
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          docker build -f package/windows/Dockerfile.agent -t ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:agent-windows-2019 .
+          docker build --build-arg SERVERCORE_VERSION=ltsc2019 -f package/windows/Dockerfile.agent -t ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:agent-windows-2019 .
           docker push ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:agent-windows-2019
         shell: bash
