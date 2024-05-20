@@ -38,7 +38,7 @@ jobs:
         shell: pwsh
 
   build-push-tag:
-    #if: contains(fromJSON('["push", "tag"]'), github.event_name)
+    #if: github.event_name == "push" || github.event_name == "tag" 
     name: Build Pushed Tag
     runs-on: windows-2019
     steps:
@@ -69,7 +69,7 @@ jobs:
           DOCKER_HOST: npipe:////./pipe/docker_engine
 
   docker-publish:
-    if: contains(fromJSON('["push", "tag"]'), github.event_name)
+    #if: github.event_name == "push" || github.event_name == "tag" 
     name: Publish Pushed Tag
     runs-on: windows-2019
     steps:
