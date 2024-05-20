@@ -85,12 +85,17 @@ jobs:
       - name: Build agent.exe
         run: |
           pwsh -File scripts/windows/build-agent.ps1
+          dir agent.exe
         shell: pwsh
 
       - name: Build and Push Docker Image - Head Agent
         if: startsWith(github.ref, 'refs/heads/')
         run: |
-          docker build --build-arg SERVERCORE_VERSION=ltsc2019 -f package/windows/Dockerfile.agent -t ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:head-agent-${{ github.sha }}-windows-2019 .
+          docker build \ 
+            --build-arg SERVERCORE_VERSION=ltsc2019 \ 
+            --build-arg ARCH=amd64 \ 
+            --build-arg VERSION=${{ github.ref_name }}-${{ github.sha }}-head \ 
+            -f package/windows/Dockerfile.agent -t ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:head-agent-${{ github.sha }}-windows-2019 .
           docker push ${{ secrets.STAGE_REGISTRY_USERNAME }}/rancher:head-agent-${{ github.sha }}-windows-2019
         shell: bash
 
