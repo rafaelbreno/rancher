@@ -14,7 +14,7 @@ on:
 
 jobs:
   build-pr:
-    if: github.event_name == "pull_request"
+    if: github.event_name == 'pull_request'
     name: Build Pull Request
     runs-on: windows-2022
     steps:
@@ -38,7 +38,7 @@ jobs:
         shell: pwsh
 
   build-push-tag:
-    if: github.event_name == "push" || github.event_name == "tag" 
+    if: github.event_name == 'push' || github.event_name == 'tag' 
     name: Build Pushed Tag
     runs-on: windows-2022
     steps:
@@ -69,7 +69,7 @@ jobs:
           DOCKER_HOST: npipe:////./pipe/docker_engine
 
   docker-publish:
-    if: github.event_name == "push" || github.event_name == "tag" 
+    if: github.event_name == 'push' || github.event_name == 'tag' 
     name: Publish Pushed Tag
     runs-on: windows-2022
     steps:
