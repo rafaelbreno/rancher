@@ -1,0 +1,85 @@
+name: Running Test Script
+on:
+  workflow_dispatch:
+
+env:
+  K3S_VERSION: v1.30.1+k3s1
+
+jobs:
+  build-server:
+    name: Build rancher server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+        shell: bash
+
+      - name: Run Build Server
+        run: |
+          ./scripts/build-server
+        shell: bash
+
+      - name: Upload Rancher Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: rancher
+          path: bin/rancher
+
+  integration-testing:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    needs:
+      - build-server
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Rancher Binary
+        uses: actions/download-artifact@v4
+        with:
+          name: rancher
+          path: bin
+
+      - name: Make Rancher Binary Executable
+        run: chmod +x ./bin/rancher
+        shell: bash
+
+      - name: Download and Install k3s
+        run: |
+          curl -L -o k3s "https://github.com/k3s-io/k3s/releases/download/${{ env.K3S_VERSION }}/k3s"
+          chmod +x k3s
+          sudo mv k3s /usr/local/bin/
+        shell: bash
+
+      - name: Stop Existing k3s Service
+        run: |
+          sudo systemctl stop k3s || true
+          sudo pkill -f k3s || true
+          sudo rm -rf /etc/rancher/k3s /var/lib/rancher/k3s
+        shell: bash
+
+      - name: Verify k3s Installation and Start k3s
+        run: |
+          k3s --version
+          k3s kubectl get nodes
+        shell: bash
+
+      - name: Integration tests
+        run: |
+          sudo ./scripts/test
+        shell: bash
+        env:
+          ARCH: amd64
+          CI: true
+          AGENT_TAG: latest
+          CATTLE_SYSTEM_AGENT_VERSION: v0.3.6
