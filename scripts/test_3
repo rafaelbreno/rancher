@@ -1,0 +1,20 @@
+#!/bin/bash
+# Fourth step, 
+# Set bash script to exit immediately if any command fails
+set -e
+
+# Function: cleanup
+# This function is called upon script exit to stop the Rancher server and clean up processes.
+cleanup()
+{
+    EXIT=$?  # Capture the exit status of the last command
+    set +ex  # Disable script debugging and exit on error
+    echo Stopping rancher server
+    kill $RANCHER_RUN_PID  # Kill the Rancher server process
+    wait $RANCHER_RUN_PID  # Wait for the Rancher server process to terminate
+    if [ $PID != -1 ]; then
+      kill $PID  # Kill the secondary process if it exists
+      wait $PID  # Wait for the secondary process to terminate
+    fi
+    return $EXIT  # Return the captured exit status
+}

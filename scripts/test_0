@@ -1,0 +1,19 @@
+#!/bin/bash
+# First step, running unit tests
+# Set bash script to exit immediately if any command fails
+set -e
+
+# Section: Architecture Check
+# Skip tests for s390x architecture as k3s doesn't support it
+if [ ${ARCH} == s390x ]; then
+    exit 0
+fi
+
+# Change directory to the parent directory of the script
+cd $(dirname $0)/..
+
+# Section: Unit Tests
+# Run Go unit tests with coverage and specific tags
+echo Running unit tests
+go test -cover -tags=test ./pkg/...
+

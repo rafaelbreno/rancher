@@ -1,4 +1,5 @@
 #!/bin/bash
+# Second step, 
 # Set bash script to exit immediately if any command fails
 set -e
 
@@ -17,22 +18,6 @@ cleanup()
     fi
     return $EXIT  # Return the captured exit status
 }
-
-# Section: Architecture Check
-# Skip tests for s390x architecture as k3s doesn't support it
-if [ ${ARCH} == s390x ]; then
-    exit 0
-fi
-
-# Change directory to the parent directory of the script
-cd $(dirname $0)/..
-
-## Section: Unit Tests
-## Run Go unit tests with coverage and specific tags
-#echo Running unit tests
-#go test -cover -tags=test ./pkg/...
-
-##################################################################################################################################################
 
 # Section: Architecture Specific Setup
 # Set ETCD_UNSUPPORTED_ARCH environment variable for unsupported architectures
@@ -115,7 +100,8 @@ run_rancher()
         fi
         if [ "$PID" = "-1" ]; then
           echo Starting rancher server using run
-          ./scripts/run >/tmp/rancher.log 2>&1 &  # Start the Rancher server
+          ./scripts/run &  # Start the Rancher server
+          #./scripts/run >/tmp/rancher.log 2>&1 &  # Start the Rancher server
           PID=$!  # Capture the process ID of the Rancher server
         fi
         sleep 2

@@ -1,0 +1,177 @@
+#!/bin/bash
+# Set bash script to exit immediately if any command fails
+set -e
+
+# Change directory to the parent directory of the script
+cd $(dirname $0)/..
+
+# Section: Architecture Specific Setup
+# Ensure ARCH is set to avoid unary operator error
+ARCH=${ARCH:-amd64}
+
+# Function: cleanup
+# This function is called upon script exit to stop the Rancher server and clean up processes.
+cleanup()
+{
+    EXIT=$?  # Capture the exit status of the last command
+    set +ex  # Disable script debugging and exit on error
+    echo Stopping rancher server
+    kill $RANCHER_RUN_PID  # Kill the Rancher server process
+    wait $RANCHER_RUN_PID  # Wait for the Rancher server process to terminate
+    if [ $PID != -1 ]; then
+      kill $PID  # Kill the secondary process if it exists
+      wait $PID  # Wait for the secondary process to terminate
+    fi
+    return $EXIT  # Return the captured exit status
+}
+
+# Section: Architecture Specific Setup
+if [ "${ARCH}" == "arm64" ] || [ "${ARCH}" == "s390x" ]; then
+    export ETCD_UNSUPPORTED_ARCH=${ARCH}
+fi
+
+TB_ORG=rancher  # Set default organization
+
+# Section: Test Distribution Configuration
+if [ -z "${TEST_DIST}" ] || [ "${TEST_DIST}" = "k3s" ]; then
+  TEST_DIST=k3s
+  AIRGAP=-airgap
+  TB_ORG=k3s-io
+else
+  LINUX=.linux
+fi
+
+export DIST=${TEST_DIST}
+export SOME_K8S_VERSION=${SOME_K8S_VERSION}
+export TB_ORG=${TB_ORG}
+
+# Section: Rancher Agent Image
+source ./scripts/version  # Source the version script
+export CATTLE_AGENT_IMAGE="rancher/rancher-agent:${AGENT_TAG}"
+echo "Using Rancher agent image $CATTLE_AGENT_IMAGE"
+
+# Extract and export environment variables from the Dockerfile
+eval "$(grep '^ENV CATTLE_SYSTEM_AGENT' package/Dockerfile | awk '{print "export " $2 "=" $3}')"
+eval "$(grep '^ENV CATTLE_WINS_AGENT' package/Dockerfile | awk '{print "export " $2 "=" $3}')"
+eval "$(grep '^ENV CATTLE_CSI_PROXY_AGENT' package/Dockerfile | awk '{print "export " $2 "=" $3}')"
+eval "$(grep '^ENV CATTLE_KDM_BRANCH' package/Dockerfile | awk '{print "export " $2 "=" $3}')"
+
+# Section: Kubernetes Version Configuration
+if [ -z "${SOME_K8S_VERSION}" ]; then
+  export SOME_K8S_VERSION=$(curl -sS https://raw.githubusercontent.com/rancher/kontainer-driver-metadata/dev-v2.8/data/data.json | jq -r ".$DIST.releases[-1].version")
+fi
+
+# Section: Rancher Server Setup
+echo "Starting rancher server for test"
+touch /tmp/rancher.log
+
+# Prepare directories and files for Rancher server setup
+sudo mkdir -p /var/lib/rancher/$DIST/agent/images
+sudo grep PodTestImage ./tests/v2prov/defaults/defaults.go | cut -f2 -d'"' | sudo tee /var/lib/rancher/$DIST/agent/images/pull.txt > /dev/null
+sudo grep MachineProvisionImage ./pkg/settings/setting.go | cut -f4 -d'"' | sudo tee -a /var/lib/rancher/$DIST/agent/images/pull.txt > /dev/null
+sudo mkdir -p /usr/share/rancher/ui/assets
+sudo curl -sLf https://github.com/rancher/system-agent/releases/download/${CATTLE_SYSTEM_AGENT_VERSION}/rancher-system-agent-amd64 -o /usr/share/rancher/ui/assets/rancher-system-agent-amd64
+sudo curl -sLf https://github.com/rancher/system-agent/releases/download/${CATTLE_SYSTEM_AGENT_VERSION}/rancher-system-agent-arm64 -o /usr/share/rancher/ui/assets/rancher-system-agent-arm64
+sudo curl -sLf https://github.com/rancher/system-agent/releases/download/${CATTLE_SYSTEM_AGENT_VERSION}/system-agent-uninstall.sh -o /usr/share/rancher/ui/assets/system-agent-uninstall.sh
+
+# Function: run_rancher
+run_rancher() {
+    RESTART_COUNT=0
+    while sleep 2; do
+        if [ "$PID" != "-1" ] && ! ps -p $PID > /dev/null; then
+            echo "Rancher died"
+            dump_rancher_logs
+            echo "K3s logs were:"
+            echo -e "-----K3S-LOG-DUMP-START-----"
+            if [ -f build/testdata/k3s.log ]; then
+                cat build/testdata/k3s.log            
+              else
+                echo "No K3s log found"
+            fi
+            echo -e "\n-----K3S-LOG-DUMP-END-----"
+            set +e
+            echo "Attempting to kill K3s"
+            sudo pkill -e k3s
+            set -e
+            PID=-1
+            if [ "$RESTART_COUNT" = "2" ]; then
+                echo "Rancher died 3 times, aborting"
+                sudo kill -42 $PWRAPPROC
+            fi
+            RESTART_COUNT=$((RESTART_COUNT + 1))
+            sleep 5
+        fi
+        if [ "$PID" = "-1" ]; then
+          echo "Starting rancher server using run"
+          sudo ./scripts/run >/tmp/rancher.log 2>&1 &
+          PID=$!
+        fi
+        sleep 2
+    done
+}
+
+# Function: dump_rancher_logs
+dump_rancher_logs() {
+  echo "Rancher logs were"
+  echo -e "-----RANCHER-LOG-DUMP-START-----"
+  cat /tmp/rancher.log
+  echo -e "\n-----RANCHER-LOG-DUMP-END-----"
+}
+
+# uncomment to get startup logs. Don't leave them on because it slows drone down too
+# much
+tail -F /tmp/rancher.log &
+TPID=$!
+
+# Main script execution
+trap "exit 1" 42
+PWRAPPROC="$$"
+
+PID=-1
+run_rancher &
+RANCHER_RUN_PID=$!
+trap cleanup exit
+
+# Section: Health Checks
+echo "Waiting for Rancher to be healthy"
+./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
+
+echo "Waiting up to 5 minutes for rancher-webhook deployment"
+./scripts/retry \
+  --timeout 300 \
+  --sleep 2 \
+  --message-interval 30 \
+  --message "rancher-webhook was not available after {{elapsed}} seconds" \
+  "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-system deploy/rancher-webhook &>/dev/null"
+
+echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
+./scripts/retry \
+  --timeout 300 \
+  --sleep 2 \
+  --message-interval 30 \
+  --message "rancher-provisioning-capi was not available after {{elapsed}} seconds" \
+  "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-provisioning-capi-system deploy/capi-controller-manager &>/dev/null"
+
+# Section: Integration Tests
+echo "Running build-integration-setup"
+./tests/v2/integration/scripts/build-integration-setup
+
+echo "Running integrationsetup"
+export CATTLE_TEST_CONFIG=$(pwd)/config.yaml
+./tests/v2/integration/bin/integrationsetup || {
+  dump_rancher_logs
+  exit 1
+}
+
+echo "Running go integration tests"
+go test -v -failfast -p 1 ./tests/v2/integration/... || {
+  dump_rancher_logs
+  exit 1
+}
+
+echo "Running tox tests"
+INT_TESTS_STARTED=true
+cd ./tests/integration
+tox -e rancher -- -m "not nonparallel" -n $(nproc)
+tox -e rancher -- -m nonparallel
+tail -f /tmp/rancher-test.log &
