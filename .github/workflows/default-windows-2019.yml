@@ -71,7 +71,27 @@ jobs:
       - name: Verify k3s Installation and Start k3s
         run: |
           k3s --version
+          sudo k3s server --https-listen-port 6443 &
+          sleep 30  # Give k3s server time to start
           k3s kubectl get nodes
+        shell: bash
+
+      - name: Ensure k3s is Running
+        run: |
+          RETRIES=5
+          while [ $RETRIES -gt 0 ]; do
+            if k3s kubectl get nodes; then
+              echo "k3s is running"
+              break
+            fi
+            echo "Waiting for k3s to be ready..."
+            sleep 10
+            RETRIES=$((RETRIES-1))
+          done
+          if [ $RETRIES -eq 0 ]; then
+            echo "k3s did not become ready in time"
+            exit 1
+          fi
         shell: bash
 
       - name: Integration tests
