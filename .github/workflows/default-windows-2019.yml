@@ -65,12 +65,19 @@ jobs:
           k3s --version
         shell: bash
 
-      - name: Integration tests
+      - name: Run Integration Tests
         run: |
-          sudo ./scripts/test
+          sudo ./scripts/test || (cat /tmp/rancher.log && false)
         shell: bash
         env:
           ARCH: amd64
           CI: true
           AGENT_TAG: latest
           CATTLE_SYSTEM_AGENT_VERSION: v0.3.6
+
+      - name: Upload Rancher Logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rancher-logs
+          path: /tmp/rancher.log
