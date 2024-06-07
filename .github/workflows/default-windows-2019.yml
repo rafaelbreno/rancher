@@ -64,6 +64,14 @@ jobs:
           k3s --version
         shell: bash
 
+      - name: Stop Previous k3s Instances
+        run: |
+          sudo systemctl stop k3s || true
+          sudo killall k3s || true
+          sudo rm -rf /var/lib/rancher/k3s
+          sudo rm -rf /var/lib/kubelet
+        shell: bash
+
       - name: Run Integration Tests
         run: |
           sudo ./scripts/test || (
