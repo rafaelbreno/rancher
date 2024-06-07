@@ -56,42 +56,13 @@ jobs:
 
       - name: Download and Install k3s
         run: |
-          curl -L -o k3s "https://github.com/k3s-io/k3s/releases/download/${{ env.K3S_VERSION }}/k3s"
-          chmod +x k3s
-          sudo mv k3s /usr/local/bin/
-        shell: bash
-
-      - name: Stop Existing k3s Service
-        run: |
-          sudo systemctl stop k3s || true
-          sudo pkill -f k3s || true
-          sudo rm -rf /etc/rancher/k3s /var/lib/rancher/k3s
+          curl -L -o /usr/local/bin/k3s "https://github.com/k3s-io/k3s/releases/download/${{ env.K3S_VERSION }}/k3s"
+          chmod +x /usr/local/bin/k3s
         shell: bash
 
       - name: Verify k3s Installation and Start k3s
         run: |
           k3s --version
-          sudo k3s server --https-listen-port 6443 --write-kubeconfig-mode=644 &
-          sleep 30  # Give k3s server time to start
-          k3s kubectl get nodes
-        shell: bash
-
-      - name: Ensure k3s is Running
-        run: |
-          RETRIES=5
-          while [ $RETRIES -gt 0 ]; do
-            if k3s kubectl get nodes; then
-              echo "k3s is running"
-              break
-            fi
-            echo "Waiting for k3s to be ready..."
-            sleep 10
-            RETRIES=$((RETRIES-1))
-          done
-          if [ $RETRIES -eq 0 ]; then
-            echo "k3s did not become ready in time"
-            exit 1
-          fi
         shell: bash
 
       - name: Integration tests
