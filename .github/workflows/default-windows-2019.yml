@@ -54,13 +54,12 @@ jobs:
         run: chmod +x ./bin/rancher
         shell: bash
 
-      - name: Download and Install k3s
+      - name: Install k3s
         run: |
-          curl -L -o /usr/local/bin/k3s "https://github.com/k3s-io/k3s/releases/download/${{ env.K3S_VERSION }}/k3s"
-          chmod +x /usr/local/bin/k3s
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${{ env.K3S_VERSION }} sh -
         shell: bash
 
-      - name: Verify k3s Installation and Start k3s
+      - name: Verify k3s Installation
         run: |
           k3s --version
         shell: bash
@@ -68,10 +67,9 @@ jobs:
       - name: Run Integration Tests
         run: |
           sudo ./scripts/test || (
-            cat /tmp/rancher.log && 
-            echo "Checking k3s status..." && 
-            sudo systemctl status k3s &&
-            sudo journalctl -u k3s -n 100 &&
+            cat /tmp/rancher.log &&
+            echo "Checking k3s logs..." &&
+            (sudo cat /var/log/k3s.log || sudo cat /var/lib/rancher/k3s/server/logs/k3s.log || echo "k3s logs not found") &&
             false
           )
         shell: bash
