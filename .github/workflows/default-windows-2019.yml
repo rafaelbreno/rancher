@@ -67,7 +67,13 @@ jobs:
 
       - name: Run Integration Tests
         run: |
-          sudo ./scripts/test || (cat /tmp/rancher.log && sudo journalctl -u k3s && false)
+          sudo ./scripts/test || (
+            cat /tmp/rancher.log && 
+            echo "Checking k3s status..." && 
+            sudo systemctl status k3s &&
+            sudo journalctl -u k3s -n 100 &&
+            false
+          )
         shell: bash
         env:
           ARCH: amd64
