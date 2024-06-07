@@ -109,10 +109,6 @@ dump_rancher_logs() {
   echo -e "\n-----RANCHER-LOG-DUMP-END-----"
 }
 
-# Start K3s
-echo "Starting K3s server"
-k3s server --https-listen-port 6443 &
-
 trap "exit 1" 42
 PWRAPPROC="$$"
 
@@ -161,5 +157,3 @@ INT_TESTS_STARTED=true
 cd ./tests/integration
 tox -e rancher -- -m "not nonparallel" -n $(nproc)
 tox -e rancher -- -m nonparallel
-
-tail -f /tmp/rancher-test.log &
