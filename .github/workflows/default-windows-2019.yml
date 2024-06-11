@@ -20,7 +20,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: rancher
-          path: ./bin
+          path: /usr/local/bin/rancher
           run-id: 9410755745
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
