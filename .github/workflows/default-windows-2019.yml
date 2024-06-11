@@ -13,6 +13,9 @@ jobs:
     container:
       image: rancher/dapper:v0.6.0
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Download Rancher Binary
         uses: actions/download-artifact@v4
         with:
@@ -29,8 +32,6 @@ jobs:
       # without Git installed work by downloading a tarball of the source.
       - name: Add Git
         run: apk add -U git
-      - name: Checkout code
-        uses: actions/checkout@v4
       # Run dapper commands. This is run inside the container image based
       # on the dapper image with the source checked out.
       - name: Run dapper ci command
