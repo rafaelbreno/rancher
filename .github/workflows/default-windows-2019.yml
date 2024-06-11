@@ -73,7 +73,7 @@ jobs:
       - name: Verify k3s Installation and Start k3s
         run: |
           k3s --version
-          sudo k3s server --https-listen-port 6445 --write-kubeconfig-mode=644 &
+          sudo k3s server --https-listen-port 6444 --write-kubeconfig-mode=644 &
           sleep 30
           k3s kubectl get nodes
         shell: bash
