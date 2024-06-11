@@ -138,7 +138,7 @@ VOLUME /var/lib/rancher
 VOLUME /var/lib/kubelet
 WORKDIR ${DAPPER_SOURCE}
 
-COPY /usr/local/bin/rancher bin/rancher
+COPY ./bin/rancher ./bin/rancher
 
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]
