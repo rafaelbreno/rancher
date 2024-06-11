@@ -28,6 +28,9 @@ jobs:
       - name: Verify Rancher Binary
         run: ls -l bin/rancher
 
+      - name: List bin directory
+        run: ls -l ./bin
+
       - name: Build Dapper Image
         run: docker build -t dapper-rancher -f Dockerfile.dapper .
 

@@ -1,7 +1,6 @@
 FROM registry.suse.com/bci/golang:1.21
 
 RUN mkdir -p /go/src/github.com/rancher/rancher/bin
-
 COPY ./bin/rancher /go/src/github.com/rancher/rancher/bin/rancher
 
 ARG DAPPER_HOST_ARCH
