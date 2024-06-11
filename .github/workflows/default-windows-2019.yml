@@ -27,16 +27,13 @@ jobs:
       - name: Make Rancher Binary Executable
         run: chmod +x ./bin/rancher
 
-      # Git is not in the Dapper container image and needs to be added so
-      # that steps, like the dirty check, can be run. Code checkouts
-      # without Git installed work by downloading a tarball of the source.
-      - name: Add Git
-        run: apk add -U git
-      # Run dapper commands. This is run inside the container image based
-      # on the dapper image with the source checked out.
-      - name: Run dapper ci command
-        run: dapper ci
+      - name: Build Dapper Image
+        run: |
+          docker build -t dapper-rancher -f Dockerfile.dapper .
+        shell: bash
 
+      - name: Run Dapper CI Command
+        run: docker run --rm dapper-rancher dapper ci
 
 
 
