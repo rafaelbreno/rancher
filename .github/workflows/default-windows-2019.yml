@@ -13,6 +13,18 @@ jobs:
     container:
       image: rancher/dapper:v0.6.0
     steps:
+      - name: Download Rancher Binary
+        uses: actions/download-artifact@v4
+        with:
+          name: rancher
+          path: bin
+          run-id: 9410755745
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Make Rancher Binary Executable
+        run: chmod +x ./bin/rancher
+
+        shell: bash
       # Git is not in the Dapper container image and needs to be added so
       # that steps, like the dirty check, can be run. Code checkouts
       # without Git installed work by downloading a tarball of the source.
@@ -24,6 +36,11 @@ jobs:
       # on the dapper image with the source checked out.
       - name: Run dapper ci command
         run: dapper ci
+
+
+
+
+
   #build-server:
     #name: Build rancher server
     #runs-on: ubuntu-latest
