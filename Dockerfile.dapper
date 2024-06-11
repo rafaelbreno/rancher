@@ -1,8 +1,5 @@
 FROM registry.suse.com/bci/golang:1.21
 
-RUN mkdir -p /go/src/github.com/rancher/rancher/bin
-COPY ./bin/rancher /go/src/github.com/rancher/rancher/bin/rancher
-
 ARG DAPPER_HOST_ARCH
 ENV HOST_ARCH=${DAPPER_HOST_ARCH} ARCH=${DAPPER_HOST_ARCH}
 ENV CATTLE_HELM_VERSION v2.16.8-rancher2
@@ -140,6 +137,8 @@ RUN if [ "${ARCH}" == "amd64" ]; then \
 VOLUME /var/lib/rancher
 VOLUME /var/lib/kubelet
 WORKDIR ${DAPPER_SOURCE}
+
+COPY --from rancher/rancher:v2.8-head /usr/bin/rancher bin/rancher
 
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]
