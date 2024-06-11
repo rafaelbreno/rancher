@@ -8,8 +8,6 @@ env:
 jobs:
   container-test-job:
     runs-on: ubuntu-latest
-    # Setting the container image to the latest Dapper. The steps will run
-    # in a container based on this image.
     container:
       image: rancher/dapper:v0.6.0
     steps:
@@ -20,13 +18,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: rancher
-          path: /usr/local/bin/rancher
+          path: bin
           run-id: 9410755745
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Make Rancher Binary Executable
-        #run: chmod +x ./bin/rancher
-        run: chmod +x /usr/local/bin/rancher
+        run: chmod +x bin/rancher
+
+      - name: Verify Rancher Binary
+        run: ls -l bin/rancher
 
       - name: Build Dapper Image
         run: docker build -t dapper-rancher -f Dockerfile.dapper .
