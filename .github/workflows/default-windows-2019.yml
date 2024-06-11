@@ -23,8 +23,8 @@ jobs:
 
       - name: Make Rancher Binary Executable
         run: chmod +x ./bin/rancher
-
         shell: bash
+
       # Git is not in the Dapper container image and needs to be added so
       # that steps, like the dirty check, can be run. Code checkouts
       # without Git installed work by downloading a tarball of the source.
