@@ -28,9 +28,7 @@ jobs:
         run: chmod +x ./bin/rancher
 
       - name: Build Dapper Image
-        run: |
-          docker build -t dapper-rancher -f Dockerfile.dapper .
-        shell: bash
+        run: docker build -t dapper-rancher -f Dockerfile.dapper .
 
       - name: Run Dapper CI Command
         run: docker run --rm dapper-rancher dapper ci
