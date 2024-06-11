@@ -63,17 +63,19 @@ jobs:
           sudo mv k3s /usr/local/bin/
         shell: bash
 
-      - name: Verify k3s Installation
-        run: |
-          k3s --version
-        shell: bash
-
-      - name: Stop Previous k3s Instances
+      - name: Stop Existing k3s Service
         run: |
           sudo systemctl stop k3s || true
-          sudo killall k3s || true
-          sudo rm -rf /var/lib/rancher/k3s
-          sudo rm -rf /var/lib/kubelet
+          sudo pkill -f k3s || true
+          sudo rm -rf /etc/rancher/k3s /var/lib/rancher/k3s
+        shell: bash
+
+      - name: Verify k3s Installation and Start k3s
+        run: |
+          k3s --version
+          sudo k3s server --https-listen-port 6445 --write-kubeconfig-mode=644 &
+          sleep 30
+          k3s kubectl get nodes
         shell: bash
 
       - name: Run Integration Tests
