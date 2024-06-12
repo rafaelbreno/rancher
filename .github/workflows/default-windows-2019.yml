@@ -32,7 +32,7 @@ jobs:
         run: ls -l ./bin
 
       - name: Set Dapper Host Arch
-        run: echo "DAPPER_HOST_ARCH=$(uname -m)" >> $GITHUB_ENV
+        run: echo "DAPPER_HOST_ARCH=amd64" >> $GITHUB_ENV
 
       - name: Build Dapper Image
         run: docker build --build-arg DAPPER_HOST_ARCH=${{ env.DAPPER_HOST_ARCH }} -t dapper-rancher -f Dockerfile.dapper .
