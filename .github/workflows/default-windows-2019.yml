@@ -31,8 +31,11 @@ jobs:
       - name: List bin directory
         run: ls -l ./bin
 
+      - name: Set Dapper Host Arch
+        run: echo "DAPPER_HOST_ARCH=$(uname -m)" >> $GITHUB_ENV
+
       - name: Build Dapper Image
-        run: docker build -t dapper-rancher -f Dockerfile.dapper .
+        run: docker build --build-arg DAPPER_HOST_ARCH=${{ env.DAPPER_HOST_ARCH }} -t dapper-rancher -f Dockerfile.dapper .
 
       - name: Run Dapper CI Command
         run: docker run --rm dapper-rancher dapper ci
