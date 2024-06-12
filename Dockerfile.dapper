@@ -133,6 +133,10 @@ RUN if [ "${ARCH}" == "amd64" ]; then \
         helm_v3 plugin install https://github.com/helm-unittest/helm-unittest.git --version ${HELM_UNITTEST_VERSION}; \
     fi
 
+# Copy the rancher binary from the official Rancher image
+COPY --from=rancher/rancher:v2.8-head /usr/bin/rancher ./rancher
+
+COPY ./scripts ./scripts
 
 VOLUME /var/lib/rancher
 VOLUME /var/lib/kubelet
