@@ -1,5 +1,6 @@
 FROM registry.suse.com/bci/golang:1.21
 
+
 ARG DAPPER_HOST_ARCH
 ENV HOST_ARCH=${DAPPER_HOST_ARCH} ARCH=${DAPPER_HOST_ARCH}
 ENV CATTLE_HELM_VERSION v2.16.8-rancher2
@@ -127,6 +128,7 @@ ARG DRONE_BUILD_NUMBER
 ENV DAPPER_RUN_ARGS "-v rancher2-go16-pkg-1:/go/pkg -v rancher2-go16-cache-1:/root/.cache/go-build --privileged --label CI=${CI} --label DRONE_BUILD_NUMBER=${DRONE_BUILD_NUMBER}"
 ENV GOCACHE /root/.cache/go-build
 ENV HOME ${DAPPER_SOURCE}
+WORKDIR ${DAPPER_SOURCE}
 
 # set up helm unittest - only needs to run on one arch. Needs to run after $HOME has been changed so we can find it later 
 RUN if [ "${ARCH}" == "amd64" ]; then \
@@ -140,7 +142,6 @@ COPY ./scripts ./scripts
 
 VOLUME /var/lib/rancher
 VOLUME /var/lib/kubelet
-WORKDIR ${DAPPER_SOURCE}
 
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]
