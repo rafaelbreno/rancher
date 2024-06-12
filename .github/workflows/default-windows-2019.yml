@@ -14,34 +14,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download Rancher Binary
-        uses: actions/download-artifact@v4
-        with:
-          name: rancher
-          path: bin
-          run-id: 9410755745
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      #- name: Download Rancher Binary
+        #uses: actions/download-artifact@v4
+        #with:
+          #name: rancher
+          #path: ./bin
+          #run-id: 9410755745
+          #github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Make Rancher Binary Executable
-        run: chmod +x bin/rancher
+      #- name: Make Rancher Binary Executable
+        #run: chmod +x bin/rancher
 
-      - name: Verify Rancher Binary
-        run: ls -l bin/rancher
-
-      - name: List bin directory
-        run: ls -l ./bin
-
-      - name: Set Dapper Host Arch
-        run: echo "DAPPER_HOST_ARCH=amd64" >> $GITHUB_ENV
+      #- name: Verify Rancher Binary
+        #run: ls -l bin/rancher
 
       - name: Build Dapper Image
-        run: docker build --build-arg DAPPER_HOST_ARCH=${{ env.DAPPER_HOST_ARCH }} -t dapper-rancher -f Dockerfile.dapper .
-
-      - name: Run Dapper CI Command
-        run: docker run --rm dapper-rancher dapper ci
-
-
-
+        run: dapper -f Dockerfile.dapper -d ci
 
   #build-server:
     #name: Build rancher server
