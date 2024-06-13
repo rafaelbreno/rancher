@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+echo "Running 'scripts/validate'"
 echo Running: flake8 python linting
 
 cd $(dirname $0)/../tests/integration
