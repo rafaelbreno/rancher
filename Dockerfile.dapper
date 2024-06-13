@@ -17,6 +17,7 @@ ENV K3D_VERSION v5.4.6
 ENV CATTLE_KDM_BRANCH=dev-v2.8
 
 RUN zypper -n install gcc binutils glibc-devel-static ca-certificates git-core wget curl unzip tar vim less file xz gzip sed gawk iproute2 iptables jq skopeo
+
 # use containerd from k3s image, not from bci
 RUN zypper install -y -f docker && rpm -e --nodeps --noscripts containerd
 
@@ -128,7 +129,6 @@ ARG DRONE_BUILD_NUMBER
 ENV DAPPER_RUN_ARGS "-v rancher2-go16-pkg-1:/go/pkg -v rancher2-go16-cache-1:/root/.cache/go-build --privileged --label CI=${CI} --label DRONE_BUILD_NUMBER=${DRONE_BUILD_NUMBER}"
 ENV GOCACHE /root/.cache/go-build
 ENV HOME ${DAPPER_SOURCE}
-WORKDIR ${DAPPER_SOURCE}
 
 # set up helm unittest - only needs to run on one arch. Needs to run after $HOME has been changed so we can find it later 
 RUN if [ "${ARCH}" == "amd64" ]; then \
@@ -138,7 +138,7 @@ RUN if [ "${ARCH}" == "amd64" ]; then \
 # Copy the rancher binary from the official Rancher image
 COPY --from=rancher/rancher:v2.8-head /usr/bin/rancher ./rancher
 
-COPY ./scripts ./scripts
+COPY . .
 
 VOLUME /var/lib/rancher
 VOLUME /var/lib/kubelet
