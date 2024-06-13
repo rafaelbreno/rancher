@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/containers/image/v5/copy"
@@ -255,6 +256,15 @@ func pushImages(imageMapping map[string]string) error {
 			return fmt.Errorf("error parsing destination image %s: %v", dst, err)
 		}
 
+		cmd := exec.Command("docker", "version")
+		res, err := cmd.Output()
+		if err != nil {
+			return fmt.Errorf("error running `docker version`: %v", err)
+		}
+
+		fmt.Println("--------- Docker Version --------------")
+		fmt.Println(string(res))
+
 		if _, err = copy.Image(
 			context.Background(),
 			policyCtx,
@@ -272,6 +282,7 @@ func pushImages(imageMapping map[string]string) error {
 				},
 			},
 		); err != nil {
+			fmt.Println("AAAAAAAAAAAAAAAAAAAAAAA")
 			return fmt.Errorf("error copying image from source %s to destination %s: %v", src, dst, err)
 		}
 	}
