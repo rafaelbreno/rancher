@@ -57,6 +57,10 @@ jobs:
           sudo mv yq_linux_${{ env.DAPPER_HOST_ARCH }} /usr/bin/yq
 
       ## Helm Setup start
+      - name: Check if Helm is installed
+        run: | 
+          which helm
+          helm version
 
       - name: Set Helm 2 URL
         run: echo "HELM_URL_V2=https://github.com/rancher/helm/releases/download/${{ env.CATTLE_HELM_VERSION }}/rancher-helm" >> $GITHUB_ENV
