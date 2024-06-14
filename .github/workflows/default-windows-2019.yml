@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker.io containerd
+          sudo apt-get install -y docker.io
           sudo systemctl start docker
           sudo usermod -aG docker $USER
 
