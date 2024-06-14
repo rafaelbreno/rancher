@@ -61,11 +61,6 @@ jobs:
         run: |
           sudo rm -rf /usr/local/bin/helm /usr/bin/rancher-helm /usr/bin/rancher-tiller ~/.helm /usr/local/bin/helm_v3 /usr/local/bin/tiller
 
-      - name: Check if Helm is installed
-        run: | 
-          which helm
-          helm version
-
       - name: Set Helm 2 URL
         run: echo "HELM_URL_V2=https://github.com/rancher/helm/releases/download/${{ env.CATTLE_HELM_VERSION }}/rancher-helm" >> $GITHUB_ENV
 
