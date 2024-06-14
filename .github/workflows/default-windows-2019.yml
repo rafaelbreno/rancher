@@ -205,6 +205,7 @@ jobs:
         run: | 
           sudo rm -rf /usr/bin/ctr
           sudo rm -rf /usr/bin/kubectl
+          sudo rm -rf /usr/bin/unpigz
 
       - name: Create symbolic links for k3s binaries
         run: |
