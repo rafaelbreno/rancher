@@ -79,11 +79,6 @@ jobs:
       - name: Create symlink for Helm
         run: sudo ln -s /usr/bin/rancher-helm-v2 /usr/bin/helm
 
-      - name: Check if Helm V2 was properly setup
-        run: | 
-          which helm
-          helm version
-
       - name: Create symlink for Tiller
         run: sudo ln -s /usr/bin/rancher-tiller /usr/bin/tiller
 
