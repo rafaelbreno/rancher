@@ -89,10 +89,10 @@ jobs:
         run: echo "HELM_URL_V3=https://get.helm.sh/helm-${{ env.HELM_VERSION }}-linux-${{ env.DAPPER_HOST_ARCH }}.tar.gz" >> $GITHUB_ENV
 
       - name: Create temporary directory for Helm 3
-        run: mkdir /usr/tmp
+        run: sudo mkdir /usr/tmp
 
       - name: Download and extract Helm 3
-        run: curl ${{ env.HELM_URL_V3 }} | tar xvzf - --strip-components=1 -C /usr/tmp/
+        run: curl ${{ env.HELM_URL_V3 }} | sudo tar xvzf - --strip-components=1 -C /usr/tmp/
 
       - name: Move Helm 3 binary
         run: sudo mv /usr/tmp/helm /usr/bin/helm_v3
@@ -102,8 +102,8 @@ jobs:
       - name: Install kustomize
         run: |
           KUSTOMIZE_URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${{ env.KUSTOMIZE_VERSION }}/kustomize_${{ env.KUSTOMIZE_VERSION }}_linux_${{ env.DAPPER_HOST_ARCH }}.tar.gz
-          curl -sLf ${KUSTOMIZE_URL} | tar -xzf - -C /usr/bin
-          chmod +x /usr/bin/kustomize
+          sudo curl -sLf ${KUSTOMIZE_URL} | tar -xzf - -C /usr/bin
+          sudo chmod +x /usr/bin/kustomize
 
       - name: Copy Rancher binaries from k3s image
         run: |
