@@ -8,7 +8,7 @@ if [ ! -x $CMD ]; then
     echo Running: build-server
     $(dirname $0)/build-server
 else
-  echo "Doing somethings"
+  echo "Doing somethings: ${CATTLE_KDM_BRANCH}"
 
   ## this is from `scripts/build-server`
   source $(dirname $0)/version
