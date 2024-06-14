@@ -28,19 +28,19 @@ jobs:
 
       - name: Run tests
         run: |
-          export DAPPER_HOST_ARCH=${{ env.DAPPER_HOST_ARCH }}
-          export CATTLE_HELM_VERSION=${{ env.CATTLE_HELM_VERSION }}
-          export CATTLE_MACHINE_VERSION=${{ env.CATTLE_MACHINE_VERSION }}
-          export CATTLE_K3S_VERSION=${{ env.CATTLE_K3S_VERSION }}
-          export CATTLE_K3S_VERSION_DOCKER=${{ env.CATTLE_K3S_VERSION_DOCKER }}
-          export HELM_VERSION=${{ env.HELM_VERSION }}
-          export KUSTOMIZE_VERSION=${{ env.KUSTOMIZE_VERSION }}
-          export HELM_UNITTEST_VERSION=${{ env.HELM_UNITTEST_VERSION }}
-          export K3D_VERSION=${{ env.K3D_VERSION }}
-          export CATTLE_KDM_BRANCH=${{ env.CATTLE_KDM_BRANCH }}
-          export CONTROLLER_GEN_VERSION=${{ env.CONTROLLER_GEN_VERSION }}
+          #export DAPPER_HOST_ARCH=${{ env.DAPPER_HOST_ARCH }}
+          #export CATTLE_HELM_VERSION=${{ env.CATTLE_HELM_VERSION }}
+          #export CATTLE_MACHINE_VERSION=${{ env.CATTLE_MACHINE_VERSION }}
+          #export CATTLE_K3S_VERSION=${{ env.CATTLE_K3S_VERSION }}
+          #export CATTLE_K3S_VERSION_DOCKER=${{ env.CATTLE_K3S_VERSION_DOCKER }}
+          #export HELM_VERSION=${{ env.HELM_VERSION }}
+          #export KUSTOMIZE_VERSION=${{ env.KUSTOMIZE_VERSION }}
+          #export HELM_UNITTEST_VERSION=${{ env.HELM_UNITTEST_VERSION }}
+          #export K3D_VERSION=${{ env.K3D_VERSION }}
+          #export CATTLE_KDM_BRANCH=${{ env.CATTLE_KDM_BRANCH }}
+          #export CONTROLLER_GEN_VERSION=${{ env.CONTROLLER_GEN_VERSION }}
 
-          sudo ./scripts/entry ci
+          sudo -E ./scripts/entry ci
 
       - name: Uninstall existing Python versions
         run: |
