@@ -26,22 +26,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run tests
-        run: |
-          #export DAPPER_HOST_ARCH=${{ env.DAPPER_HOST_ARCH }}
-          #export CATTLE_HELM_VERSION=${{ env.CATTLE_HELM_VERSION }}
-          #export CATTLE_MACHINE_VERSION=${{ env.CATTLE_MACHINE_VERSION }}
-          #export CATTLE_K3S_VERSION=${{ env.CATTLE_K3S_VERSION }}
-          #export CATTLE_K3S_VERSION_DOCKER=${{ env.CATTLE_K3S_VERSION_DOCKER }}
-          #export HELM_VERSION=${{ env.HELM_VERSION }}
-          #export KUSTOMIZE_VERSION=${{ env.KUSTOMIZE_VERSION }}
-          #export HELM_UNITTEST_VERSION=${{ env.HELM_UNITTEST_VERSION }}
-          #export K3D_VERSION=${{ env.K3D_VERSION }}
-          #export CATTLE_KDM_BRANCH=${{ env.CATTLE_KDM_BRANCH }}
-          #export CONTROLLER_GEN_VERSION=${{ env.CONTROLLER_GEN_VERSION }}
-
-          sudo -E ./scripts/entry ci
-
       - name: Uninstall existing Python versions
         run: |
           sudo apt-get remove -y python3
@@ -282,19 +266,4 @@ jobs:
         run: docker create --name rancher-container rancher/rancher:v2.8-head && docker cp rancher-container:/usr/bin/rancher ./bin/rancher && docker rm rancher-container
 
       - name: Run tests
-        run: sudo ./scripts/entry ci
-        env:
-          DAPPER_HOST_ARCH: amd64
-          CATTLE_HELM_VERSION: v2.16.8-rancher2
-          CATTLE_MACHINE_VERSION: v0.15.0-rancher112
-          CATTLE_K3S_VERSION: v1.28.6+k3s2
-          CATTLE_K3S_VERSION_DOCKER: v1.28.6-k3s2
-          HELM_VERSION: v3.13.3
-          KUSTOMIZE_VERSION: v5.0.1
-          HELM_UNITTEST_VERSION: 0.3.2
-          K3D_VERSION: v5.4.6
-          CATTLE_KDM_BRANCH: dev-v2.8
-          CONTROLLER_GEN_VERSION: v0.12.0
-          YQ_VERSION: v4.40.2
-          PYTHON_VERSION: '^3.11'
-          GOLANG_VERSION: '^1.21'
+        run: sudo -E ./scripts/entry ci
