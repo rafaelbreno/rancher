@@ -63,7 +63,7 @@ jobs:
         run: echo "TILLER_URL=https://github.com/rancher/helm/releases/download/${{ env.CATTLE_HELM_VERSION }}/rancher-tiller" >> $GITHUB_ENV
 
       - name: Download Rancher Helm
-        run: curl -sLf ${{ env.HELM_URL_V2 }} -o /usr/bin/rancher-helm
+        run: sudo curl -sLf ${{ env.HELM_URL_V2 }} -o /usr/bin/rancher-helm
 
       - name: Download Rancher Tiller
         run: curl -sLf ${{ env.TILLER_URL }} -o /usr/bin/rancher-tiller
