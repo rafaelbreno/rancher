@@ -201,9 +201,10 @@ jobs:
           sudo ln -s /usr/bin/cni /usr/bin/loopback
           sudo ln -s /usr/bin/cni /usr/bin/portmap
 
-      - name: Removing ctr
+      - name: Removing ctr and kubectl
         run: | 
           sudo rm -rf /usr/bin/ctr
+          sudo rm -rf /usr/bin/kubectl
 
       - name: Create symbolic links for k3s binaries
         run: |
