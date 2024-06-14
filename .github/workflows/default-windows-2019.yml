@@ -11,6 +11,7 @@ jobs:
       CATTLE_HELM_VERSION: v2.16.8-rancher2
       CATTLE_MACHINE_VERSION: v0.15.0-rancher112
       CATTLE_K3S_VERSION: v1.28.6+k3s2
+      CATTLE_K3S_VERSION_DOCKER: v1.28.6-k3s2
       HELM_VERSION: v3.13.3
       KUSTOMIZE_VERSION: v5.0.1
       HELM_UNITTEST_VERSION: 0.3.2
@@ -107,93 +108,38 @@ jobs:
 
       ## Start K3s binaries
 
-      - name: Copy blkid binary from k3s image
+      - name: Copy Rancher binaries from k3s image
         run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/blkid /host-bin/blkid"
-
-      - name: Copy bandwidth binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/bandwidth /host-bin/bandwidth"
-
-      - name: Copy cni binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/cni /host-bin/cni"
-
-      - name: Copy conntrack binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/conntrack /host-bin/conntrack"
-
-      - name: Copy containerd binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/containerd /host-bin/containerd"
-
-      - name: Copy containerd-shim-runc-v2 binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/containerd-shim-runc-v2 /host-bin/containerd-shim-runc-v2"
-
-      - name: Copy ethtool binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/ethtool /host-bin/ethtool"
-
-      - name: Copy firewall binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/firewall /host-bin/firewall"
-
-      - name: Copy ip binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/ip /host-bin/ip"
-
-      - name: Copy ipset binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/ipset /host-bin/ipset"
-
-      - name: Copy k3s binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/k3s /host-bin/k3s"
-
-      - name: Copy losetup binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/losetup /host-bin/losetup"
-
-      - name: Copy pigz binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/pigz /host-bin/pigz"
-
-      - name: Copy runc binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/runc /host-bin/runc"
-
-      - name: Copy which binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/which /host-bin/which"
-
-      - name: Copy xtables-legacy-multi binary from k3s image
-        run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/aux/xtables-legacy-multi /host-bin/xtables-legacy-multi"
-
-      - name: Create symbolic links for CNI binaries
-        run: |
+          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION_DOCKER }} sh -c "
+            cp /bin/blkid /host-bin/blkid &&
+            cp /bin/bandwidth /host-bin/bandwidth &&
+            cp /bin/cni /host-bin/cni &&
+            cp /bin/conntrack /host-bin/conntrack &&
+            cp /bin/containerd /host-bin/containerd &&
+            cp /bin/containerd-shim-runc-v2 /host-bin/containerd-shim-runc-v2 &&
+            cp /bin/ethtool /host-bin/ethtool &&
+            cp /bin/firewall /host-bin/firewall &&
+            cp /bin/ip /host-bin/ip &&
+            cp /bin/ipset /host-bin/ipset &&
+            cp /bin/k3s /host-bin/k3s &&
+            cp /bin/losetup /host-bin/losetup &&
+            cp /bin/pigz /host-bin/pigz &&
+            cp /bin/runc /host-bin/runc &&
+            cp /bin/which /host-bin/which &&
+            cp /bin/aux/xtables-legacy-multi /host-bin/xtables-legacy-multi
+          "
           sudo ln -s /usr/bin/cni /usr/bin/bridge
           sudo ln -s /usr/bin/cni /usr/bin/flannel
           sudo ln -s /usr/bin/cni /usr/bin/host-local
           sudo ln -s /usr/bin/cni /usr/bin/loopback
           sudo ln -s /usr/bin/cni /usr/bin/portmap
-
-      - name: Create symbolic links for k3s binaries
-        run: |
           sudo ln -s /usr/bin/k3s /usr/bin/crictl
           sudo ln -s /usr/bin/k3s /usr/bin/ctr
           sudo ln -s /usr/bin/k3s /usr/bin/k3s-agent
           sudo ln -s /usr/bin/k3s /usr/bin/k3s-etcd-snapshot
           sudo ln -s /usr/bin/k3s /usr/bin/k3s-server
           sudo ln -s /usr/bin/k3s /usr/bin/kubectl
-
-      - name: Create symbolic links for pigz binary
-        run: |
           sudo ln -s /usr/bin/pigz /usr/bin/unpigz
-
-      - name: Create symbolic links for iptables binaries
-        run: |
           sudo ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables
           sudo ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables-save
           sudo ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables-restore
@@ -202,9 +148,6 @@ jobs:
           sudo ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-save
           sudo ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-restore
           sudo ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-translate
-
-      - name: Set up kubeconfig for k3s
-        run: |
           sudo mkdir -p /go/src/github.com/rancher/rancher/.kube
           sudo ln -s /etc/rancher/k3s/k3s.yaml /go/src/github.com/rancher/rancher/.kube/k3s.yaml
 
