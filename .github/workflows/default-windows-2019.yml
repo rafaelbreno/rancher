@@ -42,7 +42,8 @@ jobs:
         run: |
           python3 --version
           python --version
-          exit 0
+          python3 -m ensurepip --upgrade
+          python -m ensurepip --upgrade
           #sudo apt-get install -y docker.io
           #sudo systemctl start docker
           #sudo usermod -aG docker $USER
@@ -62,8 +63,8 @@ jobs:
       - name: Checking Docker 
         run: docker version
 
-      - name: Checking bins
-        run: sudo ls /usr/bin
+      #- name: Checking bins
+        #run: sudo ls /usr/bin
 
       - name: Configure git
         run: git config --global --add safe.directory /github/workspace
@@ -165,8 +166,8 @@ jobs:
             cp /bin/which /host-bin/ &&
             cp /bin/aux/xtables-legacy-multi /host-bin/"
 
-      - name: List copied binaries
-        run: ls -l /tmp/k3s-binaries
+      #- name: List copied binaries
+        #run: ls -l /tmp/k3s-binaries
 
       - name: Copy blkid binary to its place
         run: sudo cp /tmp/k3s-binaries/blkid /usr/bin/blkid
