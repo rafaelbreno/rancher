@@ -57,6 +57,10 @@ jobs:
           sudo mv yq_linux_${{ env.DAPPER_HOST_ARCH }} /usr/bin/yq
 
       ## Helm Setup start
+      - name: Uninstall Helm
+        run: |
+          sudo rm -rf /usr/local/bin/helm /usr/bin/rancher-helm /usr/bin/rancher-tiller ~/.helm /usr/local/bin/helm_v3 /usr/local/bin/tiller
+
       - name: Check if Helm is installed
         run: | 
           which helm
