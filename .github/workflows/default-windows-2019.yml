@@ -31,6 +31,9 @@ jobs:
           #sudo systemctl start docker
           #sudo usermod -aG docker $USER
 
+      - name: Checking Docker 
+        run: docker version
+
       - name: Configure git
         run: git config --global --add safe.directory /github/workspace
 
