@@ -166,7 +166,7 @@ func GatherTargetImagesAndSources(systemChartsPath, chartsPath string, imagesFro
 // which will load all images used by Rancher into a given image repository.
 func LoadScript(arch string, targetImages []string) error {
 	loadScriptName := getScriptFilename(arch, "load")
-	log.Printf("Creating %s\n", loadScriptName)
+	log.Printf("Creating file: %s\n", loadScriptName)
 	load, err := os.Create(loadScriptName)
 	if err != nil {
 		return err
