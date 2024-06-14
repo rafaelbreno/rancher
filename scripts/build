@@ -18,12 +18,18 @@ else
 
   mkdir -p bin
   if  [ -n "$CATTLE_KDM_BRANCH" ]; then
+      echo "Here: $(pwd)"
       curl -sLf https://releases.rancher.com/kontainer-driver-metadata/${CATTLE_KDM_BRANCH}/data.json > bin/data.json
   elif [ ! -e bin/data.json ] && [ -e ../kontainer-driver-metadata/data/data.json ]; then
+      echo "Here 2: $(pwd)"
       cp ../kontainer-driver-metadata/data/data.json bin/data.json
+  else
+      echo "Not Reached: $(pwd)"
   fi
 
   cd scripts
+
+  echo "Another ting: $(pwd)"
 fi
 
 
