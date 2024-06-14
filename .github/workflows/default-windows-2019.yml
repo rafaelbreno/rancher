@@ -19,10 +19,22 @@ jobs:
       CATTLE_KDM_BRANCH: dev-v2.8
       CONTROLLER_GEN_VERSION: v0.12.0
       YQ_VERSION: v4.40.2
+      PYTHON_VERSION: '3.11'
+      GOLANG_VERSION: '^1.21'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "${{ env.PYTHON_VERSION }}"
+
+      - name: Set up Go
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "${{ env.GOLANG_VERSION }}" # The Go version to download (if necessary) and use.
 
       - name: Install dependencies
         run: |
