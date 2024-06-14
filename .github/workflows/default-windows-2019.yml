@@ -238,7 +238,7 @@ jobs:
       ## End K3s binaries
 
       - name: Install k3s images
-        run: curl -sLf https://github.com/rancher/k3s/releases/download/${{ env.CATTLE_K3S_VERSION }}/k3s-images.txt -o /usr/tmp/k3s-images.txt
+        run: sudo curl -sLf https://github.com/rancher/k3s/releases/download/${{ env.CATTLE_K3S_VERSION }}/k3s-images.txt -o /usr/tmp/k3s-images.txt
 
       - name: Install Python and dependencies
         run: |
@@ -249,7 +249,7 @@ jobs:
         run: docker create --name rancher-container rancher/rancher:v2.8-head && docker cp rancher-container:/usr/bin/rancher ./bin/rancher && docker rm rancher-container
 
       - name: Run tests
-        run: ./scripts/entry ci
+        run: sudo ./scripts/entry ci
 #env:
   #K3S_VERSION: v1.30.1+k3s1
   #
