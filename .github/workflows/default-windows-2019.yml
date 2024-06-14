@@ -62,7 +62,7 @@ jobs:
           TILLER_URL=https://github.com/rancher/helm/releases/download/${{ env.CATTLE_HELM_VERSION }}/rancher-tiller
           curl -sLf ${HELM_URL_V2} -o /usr/bin/rancher-helm
           curl -sLf ${TILLER_URL} -o /usr/bin/rancher-tiller
-          chmod +x /usr/bin/rancher-helm /usr/bin/rancher-tiller
+          sudo chmod +x /usr/bin/rancher-helm /usr/bin/rancher-tiller
           sudo ln -s /usr/bin/rancher-helm /usr/bin/helm
           sudo ln -s /usr/bin/rancher-tiller /usr/bin/tiller
           helm init -c --stable-repo-url https://charts.helm.sh/stable/
