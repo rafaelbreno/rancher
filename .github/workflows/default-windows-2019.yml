@@ -201,6 +201,10 @@ jobs:
           sudo ln -s /usr/bin/cni /usr/bin/loopback
           sudo ln -s /usr/bin/cni /usr/bin/portmap
 
+      - name: Removing ctr
+        run: | 
+          sudo rm -rf /usr/bin/ctr
+
       - name: Create symbolic links for k3s binaries
         run: |
           sudo ln -s /usr/bin/k3s /usr/bin/crictl
