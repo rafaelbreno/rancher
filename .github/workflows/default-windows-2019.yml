@@ -26,7 +26,6 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc binutils libc-dev ca-certificates git wget curl unzip tar vim less file xz-utils gzip sed gawk iproute2 iptables jq skopeo
           sudo apt-get install -y docker.io
           sudo systemctl start docker
           sudo usermod -aG docker $USER
