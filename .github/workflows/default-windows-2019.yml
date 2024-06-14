@@ -27,7 +27,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run tests
-        run: sudo ./scripts/entry ci
+        run: | 
+          echo ${CATTLE_KDM_BRANCH}
+          sudo ./scripts/entry ci
         env:
           DAPPER_HOST_ARCH: amd64
           CATTLE_HELM_VERSION: v2.16.8-rancher2
