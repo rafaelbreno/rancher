@@ -34,6 +34,9 @@ jobs:
       - name: Checking Docker 
         run: docker version
 
+      - name: Checking bins
+        run: sudo ls /usr/bin
+
       - name: Configure git
         run: git config --global --add safe.directory /github/workspace
 
