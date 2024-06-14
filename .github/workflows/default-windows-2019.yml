@@ -44,6 +44,7 @@ jobs:
           python --version
           python3 -m ensurepip --upgrade
           python -m ensurepip --upgrade
+          which python3
           #sudo apt-get install -y docker.io
           #sudo systemctl start docker
           #sudo usermod -aG docker $USER

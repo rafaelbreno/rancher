@@ -4,8 +4,7 @@ set -e
 echo "Running 'scripts/validate'"
 echo Running: flake8 python linting
 
-python3 --version
-python --version
+which python3
 
 cd $(dirname $0)/../tests/integration
 tox -e flake8
