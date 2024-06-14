@@ -26,6 +26,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Uninstall existing Python versions
+        run: |
+          sudo apt-get remove -y python3
+          sudo apt-get autoremove -y
+          sudo apt-get purge -y python3
+          sudo apt-get clean
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "${{ env.PYTHON_VERSION }}"
+
       - name: Check Python version
         run: |
           python3 --version
@@ -34,11 +46,6 @@ jobs:
           #sudo apt-get install -y docker.io
           #sudo systemctl start docker
           #sudo usermod -aG docker $USER
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "${{ env.PYTHON_VERSION }}"
 
       - name: Set up Go
         uses: actions/setup-go@v5
