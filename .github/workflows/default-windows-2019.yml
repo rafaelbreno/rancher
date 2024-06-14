@@ -37,11 +37,6 @@ jobs:
       - name: Checking bins
         run: sudo ls /usr/bin
 
-      - name: Removing containerd
-        run: | 
-          sudo rm -rf /usr/bin/containerd
-          sudo rm -rf /usr/bin/containerd-shim-runc-v2
-
       - name: Configure git
         run: git config --global --add safe.directory /github/workspace
 
@@ -156,6 +151,11 @@ jobs:
 
       - name: Copy conntrack binary to its place
         run: sudo cp /tmp/k3s-binaries/conntrack /usr/bin/conntrack
+
+      - name: Removing containerd
+        run: | 
+          sudo rm -rf /usr/bin/containerd
+          sudo rm -rf /usr/bin/containerd-shim-runc-v2
 
       - name: Copy containerd binary to its place
         run: sudo cp /tmp/k3s-binaries/containerd /usr/bin/containerd
