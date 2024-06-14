@@ -102,7 +102,7 @@ jobs:
       - name: Install kustomize
         run: |
           KUSTOMIZE_URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${{ env.KUSTOMIZE_VERSION }}/kustomize_${{ env.KUSTOMIZE_VERSION }}_linux_${{ env.DAPPER_HOST_ARCH }}.tar.gz
-          sudo curl -sLf ${KUSTOMIZE_URL} | tar -xzf - -C /usr/bin
+          curl -sLf ${KUSTOMIZE_URL} | sudo tar -xzf - -C /usr/bin
           sudo chmod +x /usr/bin/kustomize
 
       - name: Copy Rancher binaries from k3s image
