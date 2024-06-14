@@ -113,7 +113,23 @@ jobs:
 
       - name: Copy all binaries from k3s image to temporary directory
         run: |
-          docker run --rm --entrypoint "" -v /tmp/k3s-binaries:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION_DOCKER }} sh -c "cp /bin/* /host-bin/"
+          docker run --rm --entrypoint "" -v /tmp/k3s-binaries:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION_DOCKER }} sh -c "
+            cp /bin/blkid /host-bin/ &&
+            cp /bin/bandwidth /host-bin/ &&
+            cp /bin/cni /host-bin/ &&
+            cp /bin/conntrack /host-bin/ &&
+            cp /bin/containerd /host-bin/ &&
+            cp /bin/containerd-shim-runc-v2 /host-bin/ &&
+            cp /bin/ethtool /host-bin/ &&
+            cp /bin/firewall /host-bin/ &&
+            cp /bin/ip /host-bin/ &&
+            cp /bin/ipset /host-bin/ &&
+            cp /bin/k3s /host-bin/ &&
+            cp /bin/losetup /host-bin/ &&
+            cp /bin/pigz /host-bin/ &&
+            cp /bin/runc /host-bin/ &&
+            cp /bin/which /host-bin/ &&
+            cp /bin/aux/xtables-legacy-multi /host-bin/"
 
       - name: List copied binaries
         run: ls -l /tmp/k3s-binaries
