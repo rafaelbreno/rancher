@@ -66,8 +66,8 @@ jobs:
 
       - name: Install Helm 2 and 3
         run: |
-          wget -O /usr/bin/rancher-helm ${{ env.HELM_URL_V2 }}
-          wget -O /usr/bin/rancher-tiller ${{ env.TILLER_URL }}
+          sudo wget -O /usr/bin/rancher-helm ${{ env.HELM_URL_V2 }}
+          sudo wget -O /usr/bin/rancher-tiller ${{ env.TILLER_URL }}
           sudo chmod +x /usr/bin/rancher-helm /usr/bin/rancher-tiller
           sudo ln -s /usr/bin/rancher-helm /usr/bin/helm
           sudo ln -s /usr/bin/rancher-tiller /usr/bin/tiller
