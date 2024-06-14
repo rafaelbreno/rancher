@@ -37,6 +37,11 @@ jobs:
       - name: Checking bins
         run: sudo ls /usr/bin
 
+      - name: Removing containerd
+        run: | 
+          sudo rm -rf /usr/bin/containerd
+          sudo rm -rf /usr/bin/containerd-shim-runc-v2
+
       - name: Configure git
         run: git config --global --add safe.directory /github/workspace
 
