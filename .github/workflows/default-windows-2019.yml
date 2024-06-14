@@ -107,7 +107,25 @@ jobs:
 
       - name: Copy Rancher binaries from k3s image
         run: |
-          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/{blkid,bandwidth,cni,conntrack,containerd,containerd-shim-runc-v2,ethtool,firewall,ip,ipset,k3s,losetup,pigz,runc,which,aux/xtables-legacy-multi} /host-bin"
+          #docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "cp /bin/{blkid,bandwidth,cni,conntrack,containerd,containerd-shim-runc-v2,ethtool,firewall,ip,ipset,k3s,losetup,pigz,runc,which,aux/xtables-legacy-multi} /host-bin"
+          docker run --rm --entrypoint "" -v /usr/bin:/host-bin rancher/k3s:${{ env.CATTLE_K3S_VERSION }} sh -c "
+            cp /bin/blkid /host-bin/blkid &&
+            cp /bin/bandwidth /host-bin/bandwidth &&
+            cp /bin/cni /host-bin/cni &&
+            cp /bin/conntrack /host-bin/conntrack &&
+            cp /bin/containerd /host-bin/containerd &&
+            cp /bin/containerd-shim-runc-v2 /host-bin/containerd-shim-runc-v2 &&
+            cp /bin/ethtool /host-bin/ethtool &&
+            cp /bin/firewall /host-bin/firewall &&
+            cp /bin/ip /host-bin/ip &&
+            cp /bin/ipset /host-bin/ipset &&
+            cp /bin/k3s /host-bin/k3s &&
+            cp /bin/losetup /host-bin/losetup &&
+            cp /bin/pigz /host-bin/pigz &&
+            cp /bin/runc /host-bin/runc &&
+            cp /bin/which /host-bin/which &&
+            cp /bin/aux/xtables-legacy-multi /host-bin/xtables-legacy-multi
+          "
           sudo ln -s /usr/bin/cni /usr/bin/bridge
           sudo ln -s /usr/bin/cni /usr/bin/flannel
           sudo ln -s /usr/bin/cni /usr/bin/host-local
