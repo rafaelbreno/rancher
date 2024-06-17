@@ -96,6 +96,8 @@ run_rancher() {
         fi
         if [ "$PID" = "-1" ]; then
           echo "Starting rancher server using run"
+          echo "PWD: $(pwd)"
+          echo "LS: $(ls -l)"
           ./scripts/run &
           PID=$!
         fi
