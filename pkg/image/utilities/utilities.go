@@ -1,6 +1,7 @@
 package utilities
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -324,15 +325,34 @@ func checkImage(image string) error {
 
 func writeSliceToFile(filename string, versions []string) error {
 	log.Printf("Creating %s\n", filename)
+
+	// Ensure the directory exists
+	dir := filepath.Dir(filename)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return fmt.Errorf("failed to create directories: %w", err)
+	}
+
+	// Create the file
 	save, err := os.Create(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create file: %w", err)
 	}
-	defer save.Close()
-	save.Chmod(0755)
+	defer func() {
+		if cerr := save.Close(); cerr != nil {
+			err = errors.Join(err, cerr) // Use errors.Join to combine errors
+		}
+	}()
 
+	// Set file permissions
+	if err := save.Chmod(0755); err != nil {
+		return fmt.Errorf("failed to set file permissions: %w", err)
+	}
+
+	// Write versions to the file
 	for _, version := range versions {
-		fmt.Fprintln(save, version)
+		if _, err := fmt.Fprintln(save, version); err != nil {
+			return fmt.Errorf("failed to write to file: %w", err)
+		}
 	}
 
 	return nil
