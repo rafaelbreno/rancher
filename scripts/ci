@@ -15,8 +15,8 @@ cd $(dirname $0)
     #exit 0
 #fi
 
-./validate
-./build
-./package
+#./validate
+#./build
+#./package
 ./test
 ./chart/ci

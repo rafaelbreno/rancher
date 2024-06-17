@@ -268,5 +268,14 @@ jobs:
       - name: Copy Rancher binary from official Rancher image
         run: docker create --name rancher-container rancher/rancher:v2.8-head && docker cp rancher-container:/usr/bin/rancher ./bin/rancher && docker rm rancher-container
 
-      - name: Run tests
+      - name: Run validate
+        run: sudo -E ./scripts/validate
+
+      - name: Run Build
+        run: sudo -E ./scripts/build
+
+      - name: Run Package
+        run: sudo -E ./scripts/package
+
+      - name: Run Tests
         run: sudo -E ./scripts/entry ci

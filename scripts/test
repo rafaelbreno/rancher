@@ -1,13 +1,6 @@
 #!/bin/bash
 set -e
 
-          while true; do
-            echo "CPU and memory usage:"
-            top -b -n1 | head -n 20
-            free -h
-            sleep 30
-          done &
-
 cleanup()
 {
     EXIT=$?
