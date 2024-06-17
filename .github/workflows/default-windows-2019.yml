@@ -268,14 +268,5 @@ jobs:
       - name: Copy Rancher binary from official Rancher image
         run: docker create --name rancher-container rancher/rancher:v2.8-head && docker cp rancher-container:/usr/bin/rancher ./bin/rancher && docker rm rancher-container
 
-      - name: Log resource usage
-        run: |
-          while true; do
-            echo "CPU and memory usage:"
-            top -b -n1 | head -n 20
-            free -h
-            sleep 30
-          done &
-
       - name: Run tests
         run: sudo -E ./scripts/entry ci

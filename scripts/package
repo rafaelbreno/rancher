@@ -29,9 +29,6 @@ if [ ${ARCH} == s390x ]; then
     ETCD_UNSUPPORTED_ARCH=s390x
 fi
 
-echo "Finding 'rancher-rke-k8s-versions.txt'"
-find / -type f -name "rancher-rke-k8s-versions.txt" 2>/dev/null
-
 echo "Building something - 'scripts/package'"
 docker build \
     --build-arg VERSION=${TAG} \
