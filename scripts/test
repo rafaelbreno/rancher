@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set +e
 
 cleanup()
 {
@@ -110,6 +110,9 @@ dump_rancher_logs() {
   echo -e "\n-----RANCHER-LOG-DUMP-END-----"
 }
 
+tail -F /tmp/rancher.log &
+TPID=$!
+
 trap "exit 1" 42
 PWRAPPROC="$$"
 
@@ -118,7 +121,6 @@ run_rancher &
 RANCHER_RUN_PID=$!
 trap cleanup exit
 
-echo "Waiting for Rancher to be healthy"
 ./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
 
 echo "Waiting up to 5 minutes for rancher-webhook deployment -- scripts/test"
@@ -136,6 +138,7 @@ echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment -- script
   --message-interval 30 \
   --message "rancher-provisioning-capi was not available after {{elapsed}} seconds" \
   "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-provisioning-capi-system deploy/capi-controller-manager &>/dev/null"
+echo "Waiting for Rancher to be healthy"
 
 echo "Running build-integration-setup"
 ./tests/v2/integration/scripts/build-integration-setup
