@@ -54,6 +54,11 @@ func main() {
 	logrus.Infof("Generating test config")
 	ipAddress, err := getOutboundIP()
 	if err != nil {
+		b, err2 := exec.Command("k3s").Output()
+		if err2 != nil {
+			fmt.Println("Error running k3s command", err2)
+		}
+		fmt.Println(string(b))
 		logrus.Fatalf("Error getting outbound IP address: %v", err)
 	}
 
