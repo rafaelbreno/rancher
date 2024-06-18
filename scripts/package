@@ -4,14 +4,14 @@ echo "Running 'scripts/package'"
 set -e
 
 source $(dirname $0)/version
-echo "--------AAAAAAAAAAAAAA---------------"
+#echo "--------AAAAAAAAAAAAAA---------------"
 source $(dirname $0)/export-config
-echo "--------BBBBBBBBBBBBBB---------------"
-echo "Searching data.json ...."
-find / -type f -name "data.json" 2>/dev/null
-echo "Finished search"
+#echo "--------BBBBBBBBBBBBBB---------------"
+#echo "Searching data.json ...."
+#find / -type f -name "data.json" 2>/dev/null
+#echo "Finished search"
 source $(dirname $0)/package-env
-echo "--------CCCCCCCCCCCCCC---------------"
+#echo "--------CCCCCCCCCCCCCC---------------"
 
 cd $(dirname $0)/../package
 

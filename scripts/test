@@ -81,7 +81,6 @@ run_rancher() {
             echo -e "-----K3S-LOG-DUMP-START-----"
             cat build/testdata/k3s.log
             echo -e "\n-----K3S-LOG-DUMP-END-----"
-            find / -type f -name "*.log"
             set +e
             echo "Attempting to kill K3s"
             pkill -e k3s
