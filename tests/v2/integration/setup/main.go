@@ -79,8 +79,8 @@ func main() {
 	})
 
 	if err != nil {
-		b, err := exec.Command("k3s").Output()
-		logrus.Infof("k3s -> %s | %v", string(b), err)
+		//b, err2 := exec.Command("k3s").Output()
+		//logrus.Infof("k3s -> %s | %v", string(b), err2)
 		logrus.Fatalf("Error with generating admin token: %v", err)
 	}
 
