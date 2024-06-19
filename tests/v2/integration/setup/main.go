@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/containers/image/v5/copy"
@@ -53,6 +54,11 @@ func main() {
 	logrus.Infof("Generating test config")
 	ipAddress, err := getOutboundIP()
 	if err != nil {
+		b, err2 := exec.Command("k3s").Output()
+		if err2 != nil {
+			fmt.Println("Error running k3s command", err2)
+		}
+		fmt.Println(string(b))
 		logrus.Fatalf("Error getting outbound IP address: %v", err)
 	}
 
@@ -73,6 +79,8 @@ func main() {
 	})
 
 	if err != nil {
+		//b, err2 := exec.Command("k3s").Output()
+		//logrus.Infof("k3s -> %s | %v", string(b), err2)
 		logrus.Fatalf("Error with generating admin token: %v", err)
 	}
 
@@ -255,6 +263,15 @@ func pushImages(imageMapping map[string]string) error {
 			return fmt.Errorf("error parsing destination image %s: %v", dst, err)
 		}
 
+		cmd := exec.Command("docker", "version")
+		res, err := cmd.Output()
+		if err != nil {
+			return fmt.Errorf("error running `docker version`: %v", err)
+		}
+
+		fmt.Println("--------- Docker Version --------------")
+		fmt.Println(string(res))
+
 		if _, err = copy.Image(
 			context.Background(),
 			policyCtx,
@@ -272,6 +289,7 @@ func pushImages(imageMapping map[string]string) error {
 				},
 			},
 		); err != nil {
+			fmt.Println("AAAAAAAAAAAAAAAAAAAAAAA")
 			return fmt.Errorf("error copying image from source %s to destination %s: %v", src, dst, err)
 		}
 	}

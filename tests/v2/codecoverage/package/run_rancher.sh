@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+
+echo "--------------- run_rancher.sh --------------------"
+docker version
 
 set -e
 
