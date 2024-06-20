@@ -17,24 +17,12 @@ import (
 	"github.com/containers/image/v5/transports/alltransports"
 	"github.com/containers/image/v5/types"
 	"github.com/creasty/defaults"
-	provisioningv1api "github.com/rancher/rancher/pkg/apis/provisioning.cattle.io/v1"
-	v1 "github.com/rancher/rancher/pkg/apis/rke.cattle.io/v1"
-	"github.com/rancher/rancher/tests/v2prov/clients"
-	"github.com/rancher/rancher/tests/v2prov/cluster"
-	testdefaults "github.com/rancher/rancher/tests/v2prov/defaults"
-	"github.com/rancher/rancher/tests/v2prov/namespace"
-	"github.com/rancher/rancher/tests/v2prov/registry"
 	rancherClient "github.com/rancher/shepherd/clients/rancher"
 	management "github.com/rancher/shepherd/clients/rancher/generated/management/v3"
 	"github.com/rancher/shepherd/extensions/token"
 	"github.com/rancher/shepherd/pkg/config"
-	namegen "github.com/rancher/shepherd/pkg/namegenerator"
-	pkgpf "github.com/rancher/shepherd/pkg/portforward"
 	"github.com/sirupsen/logrus"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/wait"
 	kwait "k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/util/retry"
 )
 
 const (
@@ -81,7 +69,8 @@ func main() {
 		AdminToken:  userToken.Token,
 		Host:        hostURL,
 		Cleanup:     &cleanup,
-		ClusterName: namegen.AppendRandomString(clusterNameBaseName),
+		ClusterName: "local",
+		// ClusterName: namegen.AppendRandomString(clusterNameBaseName),
 	}
 
 	err = defaults.Set(&rancherConfig)
@@ -96,129 +85,129 @@ func main() {
 
 	// Note that we do not defer clusterClients.Close() here. This is because doing so would cause the test namespace
 	// in which the downstream cluster resides to be deleted before it can be used in tests.
-	clusterClients, err := clients.New()
-	if err != nil {
-		logrus.Fatalf("Error creating clients: %v", err)
-	}
+	// clusterClients, err := clients.New()
+	// if err != nil {
+	// 	logrus.Fatalf("Error creating clients: %v", err)
+	// }
 
-	logrus.Info("Creating test namespace")
-	ns, err := namespace.Random(clusterClients)
-	if err != nil {
-		logrus.Fatalf("Error creating namespace: %v", err)
-	}
+	// logrus.Info("Creating test namespace")
+	// ns, err := namespace.Random(clusterClients)
+	// if err != nil {
+	// 	logrus.Fatalf("Error creating namespace: %v", err)
+	// }
 
-	logrus.Infof("Deploying registry to default namespace with secrets in namespace %s", ns.Name)
-	reg, err := registry.CreateOrGetRegistry(clusterClients, ns.Name, "registry", false)
-	if err != nil {
-		logrus.Fatalf("Error creating registry: %v", err)
-	}
+	// logrus.Infof("Deploying registry to default namespace with secrets in namespace %s", ns.Name)
+	// reg, err := registry.CreateOrGetRegistry(clusterClients, ns.Name, "registry", false)
+	// if err != nil {
+	// 	logrus.Fatalf("Error creating registry: %v", err)
+	// }
 
-	logrus.Infof("Deploying registry-cache to default namespace with secrets in namespace %s", ns.Name)
-	regCache, err := registry.CreateOrGetRegistry(clusterClients, ns.Name, "registry-cache", true)
-	if err != nil {
-		logrus.Fatalf("Error creating registry-cache: %v", err)
-	}
+	// logrus.Infof("Deploying registry-cache to default namespace with secrets in namespace %s", ns.Name)
+	// regCache, err := registry.CreateOrGetRegistry(clusterClients, ns.Name, "registry-cache", true)
+	// if err != nil {
+	// 	logrus.Fatalf("Error creating registry-cache: %v", err)
+	// }
 
-	{
-		// Merge the two registry configs so that when we look for an image in the downstream cluster, we will:
-		//  - First check "registry" (where we push our recently-built test images)
-		//  - If not found "registry", check "registry-cache" (i.e. the pull-through cache)
-		//  - If not present in "registry-cache", it will pull the image from docker.io
-		mirrors := reg.Mirrors["docker.io"]
-		mirrors.Endpoints = append(mirrors.Endpoints, regCache.Mirrors["docker.io"].Endpoints...)
-		reg.Mirrors["docker.io"] = mirrors
-		for k, v := range regCache.Configs {
-			reg.Configs[k] = v
-		}
-	}
+	// {
+	// 	// Merge the two registry configs so that when we look for an image in the downstream cluster, we will:
+	// 	//  - First check "registry" (where we push our recently-built test images)
+	// 	//  - If not found "registry", check "registry-cache" (i.e. the pull-through cache)
+	// 	//  - If not present in "registry-cache", it will pull the image from docker.io
+	// 	mirrors := reg.Mirrors["docker.io"]
+	// 	mirrors.Endpoints = append(mirrors.Endpoints, regCache.Mirrors["docker.io"].Endpoints...)
+	// 	reg.Mirrors["docker.io"] = mirrors
+	// 	for k, v := range regCache.Configs {
+	// 		reg.Configs[k] = v
+	// 	}
+	// }
 
-	// Set up a port-forward to the registry pod, so we can copy images to it.
-	stopCh := make(chan struct{}, 1)
-	errCh := make(chan error)
-	defer func() {
-		// This will stop the port-forward if it's still running
-		close(stopCh)
+	// // Set up a port-forward to the registry pod, so we can copy images to it.
+	// stopCh := make(chan struct{}, 1)
+	// errCh := make(chan error)
+	// defer func() {
+	// 	// This will stop the port-forward if it's still running
+	// 	close(stopCh)
 
-		// Print any errors returned by the port-forwarder
-		select {
-		case err := <-errCh:
-			logrus.Errorf("error in port-forward: %v", err)
-		default: // Do nothing
-		}
-		close(errCh)
-	}()
+	// 	// Print any errors returned by the port-forwarder
+	// 	select {
+	// 	case err := <-errCh:
+	// 		logrus.Errorf("error in port-forward: %v", err)
+	// 	default: // Do nothing
+	// 	}
+	// 	close(errCh)
+	// }()
 
-	logrus.Info("Forwarding local port 5000 to registry:5000")
-	if err = pkgpf.ForwardPorts(
-		clusterClients.RESTConfig,
-		"default",
-		"registry",
-		[]string{"5000:5000"},
-		stopCh,
-		errCh,
-		time.Second*10,
-	); err != nil {
-		logrus.Fatalf("Error forwarding ports: %v", err)
-	}
+	// logrus.Info("Forwarding local port 5000 to registry:5000")
+	// if err = pkgpf.ForwardPorts(
+	// 	clusterClients.RESTConfig,
+	// 	"default",
+	// 	"registry",
+	// 	[]string{"5000:5000"},
+	// 	stopCh,
+	// 	errCh,
+	// 	time.Second*10,
+	// ); err != nil {
+	// 	logrus.Fatalf("Error forwarding ports: %v", err)
+	// }
 
-	// Copy the local image rancher/rancher-agent:master-head from the Docker daemon to the Docker registry
-	// at localhost:5000 where it will be given the tag "test-local". We need to do this before we create downstream
-	// clusters to ensure that they can use this locally-built image. We're also retrying on error here because the
-	// port-forward tends to be flaky when we're transferring large images, at least on my machine.
-	shouldRetry := func(err error) bool {
-		if err != nil {
-			logrus.Errorf("Error pushing images: %v", err)
-		}
+	// // Copy the local image rancher/rancher-agent:master-head from the Docker daemon to the Docker registry
+	// // at localhost:5000 where it will be given the tag "test-local". We need to do this before we create downstream
+	// // clusters to ensure that they can use this locally-built image. We're also retrying on error here because the
+	// // port-forward tends to be flaky when we're transferring large images, at least on my machine.
+	// shouldRetry := func(err error) bool {
+	// 	if err != nil {
+	// 		logrus.Errorf("Error pushing images: %v", err)
+	// 	}
 
-		return err != nil
-	}
-	attemptImagePush := func() error {
-		logrus.Info("Attempting to push images to registry")
-		return pushImages(map[string]string{
-			"docker-daemon:" + agentImage: "docker://localhost:5000/" + agentImage,
-		})
-	}
-	if err = retry.OnError(wait.Backoff{Steps: 10}, shouldRetry, attemptImagePush); err != nil {
-		logrus.Fatalf("Failed to push images to registry: %v", err)
-	}
+	// 	return err != nil
+	// }
+	// attemptImagePush := func() error {
+	// 	logrus.Info("Attempting to push images to registry")
+	// 	return pushImages(map[string]string{
+	// 		"docker-daemon:" + agentImage: "docker://localhost:5000/" + agentImage,
+	// 	})
+	// }
+	// if err = retry.OnError(wait.Backoff{Steps: 10}, shouldRetry, attemptImagePush); err != nil {
+	// 	logrus.Fatalf("Failed to push images to registry: %v", err)
+	// }
 
-	logrus.Infof(
-		"Creating test cluster %s with %s in namespace %s",
-		rancherConfig.ClusterName,
-		testdefaults.SomeK8sVersion,
-		ns.Name,
-	)
-	c, err := cluster.New(clusterClients, &provisioningv1api.Cluster{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      rancherConfig.ClusterName,
-			Namespace: ns.Name,
-		},
-		Spec: provisioningv1api.ClusterSpec{
-			KubernetesVersion: testdefaults.SomeK8sVersion,
-			RKEConfig: &provisioningv1api.RKEConfig{
-				MachinePools: []provisioningv1api.RKEMachinePool{{
-					EtcdRole:         true,
-					ControlPlaneRole: true,
-					WorkerRole:       true,
-					Quantity:         &testdefaults.One,
-				}},
-				RKEClusterSpecCommon: v1.RKEClusterSpecCommon{
-					Registries: &reg,
-				},
-			},
-		},
-	})
-	if err != nil {
-		logrus.Fatalf("Error creating integration test cluster: %v", err)
-	}
+	// logrus.Infof(
+	// 	"Creating test cluster %s with %s in namespace %s",
+	// 	rancherConfig.ClusterName,
+	// 	testdefaults.SomeK8sVersion,
+	// 	ns.Name,
+	// )
+	// c, err := cluster.New(clusterClients, &provisioningv1api.Cluster{
+	// 	ObjectMeta: metav1.ObjectMeta{
+	// 		Name:      rancherConfig.ClusterName,
+	// 		Namespace: ns.Name,
+	// 	},
+	// 	Spec: provisioningv1api.ClusterSpec{
+	// 		KubernetesVersion: testdefaults.SomeK8sVersion,
+	// 		RKEConfig: &provisioningv1api.RKEConfig{
+	// 			MachinePools: []provisioningv1api.RKEMachinePool{{
+	// 				EtcdRole:         true,
+	// 				ControlPlaneRole: true,
+	// 				WorkerRole:       true,
+	// 				Quantity:         &testdefaults.One,
+	// 			}},
+	// 			RKEClusterSpecCommon: v1.RKEClusterSpecCommon{
+	// 				Registries: &reg,
+	// 			},
+	// 		},
+	// 	},
+	// })
+	// if err != nil {
+	// 	logrus.Fatalf("Error creating integration test cluster: %v", err)
+	// }
 
-	logrus.Info("Waiting for test cluster to be ready")
-	c, err = cluster.WaitForCreate(clusterClients, c)
-	if err != nil {
-		logrus.Fatalf("Error waiting for test cluster to be ready: %v", err)
-	}
+	// logrus.Info("Waiting for test cluster to be ready")
+	// c, err = cluster.WaitForCreate(clusterClients, c)
+	// if err != nil {
+	// 	logrus.Fatalf("Error waiting for test cluster to be ready: %v", err)
+	// }
 
-	logrus.Infof("Test cluster %s created successfully. Setup complete.", c.Name)
+	// logrus.Infof("Test cluster %s created successfully. Setup complete.", c.Name)
 }
 
 // Get preferred outbound ip of this machine
