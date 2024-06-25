@@ -121,7 +121,7 @@ trap cleanup exit
 echo "Waiting for Rancher to be healthy"
 ./scripts/retry --sleep 2 --timeout 300 "curl -sf -o /dev/null http://localhost:8080/ping"
 
-echo "Waiting up to 5 minutes for rancher-webhook deployment"
+echo "Waiting up to 5 minutes for rancher-webhook deployment -- scripts/provisioning-tests"
 ./scripts/retry \
   --timeout 300 `# Time out after 300 seconds (5 min)` \
   --sleep 2 `# Sleep for 2 seconds in between attempts` \
@@ -129,7 +129,7 @@ echo "Waiting up to 5 minutes for rancher-webhook deployment"
   --message "rancher-webhook was not available after {{elapsed}} seconds" `# Print this progress message` \
   "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-system deploy/rancher-webhook &>/dev/null"
 
-echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
+echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment -- scripts/provisioning-tests"
 ./scripts/retry \
   --timeout 300 `# Time out after 300 seconds (5 min)` \
   --sleep 2 `# Sleep for 2 seconds in between attempts` \

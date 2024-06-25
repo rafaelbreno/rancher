@@ -1,0 +1,38 @@
+FROM ubuntu:latest
+
+WORKDIR /app
+
+COPY . /app
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    jq \
+    yq \
+    vim \
+    wget \
+    tar \
+    iproute2 \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# Install Go
+RUN wget https://golang.org/dl/go1.21.1.linux-amd64.tar.gz && \
+    tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz && \
+    rm go1.21.1.linux-amd64.tar.gz
+
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+RUN ls -l /app/scripts
+
+RUN ./scripts/build-server
+
+ARG K3S_VERSION=v1.30.1+k3s1
+RUN curl -L -o /usr/local/bin/k3s "https://github.com/k3s-io/k3s/releases/download/${K3S_VERSION}/k3s" && \
+    chmod +x /usr/local/bin/k3s
+
+# Expose necessary ports for K3s
+EXPOSE 6443 443 80
+
+CMD ["/bin/bash"]

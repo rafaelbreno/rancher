@@ -1,14 +1,19 @@
 #!/bin/bash
 set -e
 
+echo "AAA $(dirname $0)"
+
 cd $(dirname $0)
 
-if ./only-ui-bumps.sh; then
-    ./build
-    ./package
-    ./chart/ci
-    exit 0
-fi
+# TODO: 
+#   update the `only-ui-bumps.sh` script bellow to do whatever it needs to do.
+
+#if ./only-ui-bumps.sh; then
+    #./build
+    #./package
+    #./chart/ci
+    #exit 0
+#fi
 
 ./validate
 ./build

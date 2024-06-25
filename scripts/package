@@ -1,9 +1,17 @@
 #!/bin/bash
+
+echo "Running 'scripts/package'"
 set -e
 
 source $(dirname $0)/version
+echo "--------AAAAAAAAAAAAAA---------------"
 source $(dirname $0)/export-config
+echo "--------BBBBBBBBBBBBBB---------------"
+echo "Searching data.json ...."
+find / -type f -name "data.json" 2>/dev/null
+echo "Finished search"
 source $(dirname $0)/package-env
+echo "--------CCCCCCCCCCCCCC---------------"
 
 cd $(dirname $0)/../package
 
@@ -21,6 +29,7 @@ if [ ${ARCH} == s390x ]; then
     ETCD_UNSUPPORTED_ARCH=s390x
 fi
 
+echo "Building something - 'scripts/package'"
 docker build \
     --build-arg VERSION=${TAG} \
     --build-arg ETCD_UNSUPPORTED_ARCH=${ETCD_UNSUPPORTED_ARCH} \
@@ -33,6 +42,7 @@ docker build \
     --build-arg CATTLE_FLEET_VERSION="${CATTLE_FLEET_VERSION}" \
     -t ${IMAGE} .
 
+echo "Building something agent - 'scripts/package'"
 docker build \
     --build-arg VERSION=${TAG} \
     --build-arg ARCH=${ARCH} \

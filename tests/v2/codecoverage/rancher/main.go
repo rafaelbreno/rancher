@@ -192,8 +192,8 @@ func runRancher(ctx context.Context) error {
 }
 
 func runServer(ctx context.Context, _ *cli.Context, cfg rancher.Options) error {
-	logrus.Infof("Rancher version %s is starting", version.FriendlyVersion())
-	logrus.Infof("Rancher arguments %+v", cfg)
+	logrus.Infof("Rancher version %s is starting 2", version.FriendlyVersion())
+	logrus.Infof("Rancher arguments %+v 2", cfg)
 
 	if cfg.AddLocal != "true" && cfg.AddLocal != "auto" {
 		logrus.Fatal("add-local flag must be set to 'true', see Rancher 2.5.0 release notes for more information")
