@@ -44,7 +44,10 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
   stat -fc %T /sys/fs/cgroup/
   echo Done checking cgroup v2:
 
-  xargs -rn1 < /sys/fs/cgroup/cgroup.procs > /sys/fs/cgroup/init/cgroup.procs || :
+  #xargs -rn1 < /sys/fs/cgroup/cgroup.procs > /sys/fs/cgroup/init/cgroup.procs || :
+  while read -r pid; do
+    echo $pid > /sys/fs/cgroup/init/cgroup.procs || :
+  done < /sys/fs/cgroup/cgroup.procs
   echo BBBBBBBBBBBBB
   # enable controllers
   sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
