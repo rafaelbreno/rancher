@@ -60,4 +60,4 @@ if [ $CI ]; then
   done
 fi
 
-exec ../../$CMD $LOGFLAG
+#exec ../../$CMD $LOGFLAG
