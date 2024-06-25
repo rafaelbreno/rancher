@@ -30,12 +30,14 @@ export CATTLE_FEATURES="harvester=false"
 #########################################################################################################################################
 # only run this if rancher is not running in kubernetes cluster
 if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
+  echo 1111111111111
   # move the processes from the root group to the /init group,
   # otherwise writing subtree_control fails with EBUSY.
   mkdir -p /sys/fs/cgroup/init
   xargs -rn1 < /sys/fs/cgroup/cgroup.procs > /sys/fs/cgroup/init/cgroup.procs || :
   # enable controllers
   sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
+  echo 2222222222222
 fi
 
 if [ $CI ]; then
@@ -44,6 +46,7 @@ if [ $CI ]; then
 
   # Attempt to find and stop any previous instances of dapper containers.
   # To combat the scenario where drone runners are reused and an instance of rancher is still running.
+  echo 3333333333333
   echo "Checking for running containers from a previous build."
 
   # gets a list of all docker containers that were started in a CI build.
@@ -53,11 +56,13 @@ if [ $CI ]; then
 
     # remove containers that were not created in this build
     if [ "${split_info[1]}" != "${DRONE_BUILD_NUMBER}" ]; then
+      echo 4444444444444
       echo "Removing old drone container ${split_info[0]}"
       docker stop ${split_info[0]}
       docker rm ${split_info[0]}
     fi
   done
+  echo 5555555555555
 fi
 
 #exec ../../$CMD $LOGFLAG
