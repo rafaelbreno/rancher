@@ -40,18 +40,13 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
   ls -l /sys/fs/cgroup/init/cgroup.procs
   echo Done validating paths paths:
 
-  echo Checking cgroup v2:
-  stat -fc %T /sys/fs/cgroup/
-  echo Done checking cgroup v2:
-
   echo Moving processes to /init cgroup:
-  while read -r pid; do
-    sudo echo $pid > /sys/fs/cgroup/init/cgroup.procs || :
-  done < /sys/fs/cgroup/cgroup.procs
-  echo BBBBBBBBBBBBB
+  sudo cat /sys/fs/cgroup/cgroup.procs | sudo xargs -I{} -n1 sh -c 'echo {}; echo {} > /sys/fs/cgroup/init/cgroup.procs'
+  #while read -r pid; do
+    #sudo echo $pid > /sys/fs/cgroup/init/cgroup.procs || :
+  #done < /sys/fs/cgroup/cgroup.procs
   # enable controllers
   sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
-  echo 2222222222222
 fi
 
 if [ $CI ]; then
@@ -60,7 +55,6 @@ if [ $CI ]; then
 
   # Attempt to find and stop any previous instances of dapper containers.
   # To combat the scenario where drone runners are reused and an instance of rancher is still running.
-  echo 3333333333333
   echo "Checking for running containers from a previous build."
 
   # gets a list of all docker containers that were started in a CI build.
@@ -70,13 +64,11 @@ if [ $CI ]; then
 
     # remove containers that were not created in this build
     if [ "${split_info[1]}" != "${DRONE_BUILD_NUMBER}" ]; then
-      echo 4444444444444
       echo "Removing old drone container ${split_info[0]}"
       docker stop ${split_info[0]}
       docker rm ${split_info[0]}
     fi
   done
-  echo 5555555555555
 fi
 
 #exec ../../$CMD $LOGFLAG
