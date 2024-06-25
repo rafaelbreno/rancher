@@ -34,7 +34,16 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
   # move the processes from the root group to the /init group,
   # otherwise writing subtree_control fails with EBUSY.
   mkdir -p /sys/fs/cgroup/init
-  echo AAAAAAAAAAAAA
+
+  echo Validating paths:
+  ls -l /sys/fs/cgroup/cgroup.procs
+  ls -l /sys/fs/cgroup/init/cgroup.procs
+  echo Done validating paths paths:
+
+  echo Checking cgroup v2:
+  stat -fc %T /sys/fs/cgroup/
+  echo Done checking cgroup v2:
+
   xargs -rn1 < /sys/fs/cgroup/cgroup.procs > /sys/fs/cgroup/init/cgroup.procs || :
   echo BBBBBBBBBBBBB
   # enable controllers
