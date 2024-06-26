@@ -81,6 +81,7 @@ curl -sLf https://github.com/rancher/system-agent/releases/download/${CATTLE_SYS
 run_rancher()
 {
   echo "Running Rancher Server ${IMAGE}"
+  echo "docker run -d --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}"
   docker run -d --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}
 }
 
