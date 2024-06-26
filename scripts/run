@@ -47,4 +47,4 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
 fi
 
 echo "docker run --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}"
-docker run --name rancher-server --restart=unless-stopped -p 8080:80 $IMAGE
+docker run --name rancher-server --restart=unless-stopped --privileged -p 8080:80 $IMAGE
