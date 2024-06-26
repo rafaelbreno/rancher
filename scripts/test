@@ -7,16 +7,6 @@ source $(dirname $0)/package-env
 
 cleanup()
 {
-    EXIT=$?
-    set +ex
-    echo Stopping rancher server
-    kill $RANCHER_RUN_PID
-    wait $RANCHER_RUN_PID
-    if [ $PID != -1 ]; then
-      kill $PID
-      wait $PID
-    fi
-    return $EXIT
 }
 
 # skipping tests for s390x since k3s doesn't support s390x yet
