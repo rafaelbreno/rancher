@@ -38,15 +38,16 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
   echo Validating paths:
   ls -l /sys/fs/cgroup/cgroup.procs
   ls -l /sys/fs/cgroup/init/cgroup.procs
-  echo Done validating paths paths:
+  echo Done validating paths:
 
   echo Moving processes to /init cgroup:
-  sudo cat /sys/fs/cgroup/cgroup.procs | sudo xargs -I{} -n1 sh -c 'echo {}; echo {} > /sys/fs/cgroup/init/cgroup.procs'
-  #while read -r pid; do
-    #sudo echo $pid > /sys/fs/cgroup/init/cgroup.procs || :
-  #done < /sys/fs/cgroup/cgroup.procs
+  while read -r pid; do
+    echo "Moving PID $pid"
+    sudo sh -c "echo $pid > /sys/fs/cgroup/init/cgroup.procs" || echo "Failed to move PID $pid"
+  done < /sys/fs/cgroup/cgroup.procs
+
   # enable controllers
-  sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
+  sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" | sudo tee "/sys/fs/cgroup/cgroup.subtree_control"
 fi
 
 if [ $CI ]; then
