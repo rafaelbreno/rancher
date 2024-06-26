@@ -2,6 +2,7 @@
 set -e
 
 docker ps --format '{{.Names}}/{{.Label "DRONE_BUILD_NUMBER"}}' --filter 'label=CI=true'
+exit 1
 
 cleanup()
 {
