@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+docker image list
+
 cleanup()
 {
     EXIT=$?
