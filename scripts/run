@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+source $(dirname $0)/version
+source $(dirname $0)/export-config
+source $(dirname $0)/package-env
+
+
 echo Starting rancher server
 cd $(dirname $0)/..
 
@@ -38,33 +43,5 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
   sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
 fi
 
-if [ $CI ]; then
-  # DISCLAIMER
-  # This code relies on the fact that our CI pipleine runs on one system at a time. Currently with drone this means that the setting `DRONE_AGENT_CONCURRENCY=1`
-
-  # Attempt to find and stop any previous instances of dapper containers.
-  # To combat the scenario where drone runners are reused and an instance of rancher is still running.
-  echo "Checking for running containers from a previous build."
-
-  # gets a list of all docker containers that were started in a CI build.
-  echo "docker ps"
-  docker ps
-  echo "docker ps --format '{{.Names}}'"
-  docker ps --format '{{.Names}}'
-  echo "docker ps --format '{{.Names}}' --filter 'label=CI=true'"
-  docker ps --format '{{.Names}}' --filter 'label=CI=true'
-
-  containers=$(docker ps --format '{{.Names}}/{{.Label "DRONE_BUILD_NUMBER"}}' --filter 'label=CI=true')
-  for container_info in $containers; do
-    IFS='/' read -ra split_info <<<"$container_info"
-
-    # remove containers that were not created in this build
-    if [ "${split_info[1]}" != "${DRONE_BUILD_NUMBER}" ]; then
-      echo "Removing old container ${split_info[0]}"
-      docker stop ${split_info[0]}
-      docker rm ${split_info[0]}
-    fi
-  done
-fi
-
-docker run --name rancher-server --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher:v2.8-head
+echo "docker run --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}"
+docker run --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}
