@@ -2,9 +2,6 @@
 set -e
 
 source $(dirname $0)/version
-source $(dirname $0)/export-config
-source $(dirname $0)/package-env
-
 
 echo Starting rancher server
 cd $(dirname $0)/..
