@@ -7,6 +7,7 @@ source $(dirname $0)/package-env
 
 cleanup()
 {
+  echo "cleanup"
 }
 
 # skipping tests for s390x since k3s doesn't support s390x yet
