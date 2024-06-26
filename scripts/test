@@ -22,6 +22,8 @@ fi
 
 cd $(dirname $0)/..
 
+echo "PWD $(pwd)"
+
 #echo Running unit tests
 #go test -cover -tags=test ./pkg/...
 
