@@ -76,34 +76,8 @@ curl -sLf https://github.com/rancher/system-agent/releases/download/${CATTLE_SYS
 
 run_rancher()
 {
-    RESTART_COUNT=0
-    while sleep 2; do
-        if [ "$PID" != "-1" ] && [ ! -e /proc/$PID ]; then
-            echo Rancher died
-            dump_rancher_logs
-            echo K3s logs were:
-            echo -e "-----K3S-LOG-DUMP-START-----"
-            cat build/testdata/k3s.log
-            echo -e "\n-----K3S-LOG-DUMP-END-----"
-            set +e
-            echo Attempting to kill K3s
-            pkill -e k3s
-            set -e
-            PID=-1
-            if [ "$RESTART_COUNT" = "2" ]; then
-                echo Rancher died 3 times, aborting
-                kill -42 $PWRAPPROC
-            fi
-            RESTART_COUNT=$((RESTART_COUNT + 1))
-            sleep 5
-        fi
-        if [ "$PID" = "-1" ]; then
-          echo Starting rancher server using run
-          ./scripts/run >/tmp/rancher.log 2>&1 &
-          PID=$!
-        fi
-        sleep 2
-    done
+  docker pull rancher/rancher:v2.8-head
+  docker run -d --name rancher-server --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher:v2.8-head
 }
 
 dump_rancher_logs()
@@ -123,7 +97,7 @@ trap "exit 1" 42
 PWRAPPROC="$$"
 
 PID=-1
-#run_rancher &
+run_rancher &
 RANCHER_RUN_PID=$!
 trap cleanup exit
 
