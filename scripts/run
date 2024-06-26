@@ -1,15 +1,19 @@
 #!/bin/bash
 set -e
 
-source $(dirname $0)/version
-
 echo Starting rancher server
-cd $(dirname $0)/..
 
-CMD=bin/rancher
-if [ ! -x $CMD ]; then
-    ./scripts/build-server
-fi
+echo "scripts/run"
+echo "  $(pwd)"
+echo "  $(ls -al)"
+
+source $(dirname $0)/version
+source $(dirname $0)/export-config
+source $(dirname $0)/package-env
+
+
+cd $(dirname $0)/..
+echo "  2: $(pwd)"
 
 if [ ! -z $1 ] && ( [ $1 = "--trace" ] || [ $1 = "--info" ] || [ $1 = "--debug" ] ); then
   LOGFLAG=$1
@@ -41,4 +45,4 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
 fi
 
 echo "docker run --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}"
-docker run --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}
+docker run --name rancher-server --restart=unless-stopped -p 8080:80 $IMAGE
