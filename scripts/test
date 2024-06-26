@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-docker image list
-
 cleanup()
 {
     EXIT=$?
@@ -78,8 +76,8 @@ curl -sLf https://github.com/rancher/system-agent/releases/download/${CATTLE_SYS
 
 run_rancher()
 {
-  docker pull rancher/rancher:v2.8-head
-  docker run -d --name rancher-server --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher:v2.8-head
+  echo "Running Rancher Server ${IMAGE}"
+  docker run -d --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}
 }
 
 dump_rancher_logs()
