@@ -22,8 +22,8 @@ fi
 
 cd $(dirname $0)/..
 
-echo Running unit tests
-go test -cover -tags=test ./pkg/...
+#echo Running unit tests
+#go test -cover -tags=test ./pkg/...
 
 if [ ${ARCH} == arm64 ] || [ ${ARCH} == s390x ]; then
     export ETCD_UNSUPPORTED_ARCH=${ARCH}

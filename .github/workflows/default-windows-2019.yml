@@ -24,7 +24,6 @@ jobs:
       YQ_VERSION: v4.40.2
       PYTHON_VERSION: '^3.11'
       GOLANG_VERSION: '^1.21'
-      CI: true
 
     steps:
       - name: Checkout code
