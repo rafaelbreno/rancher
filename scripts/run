@@ -46,5 +46,15 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
   sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
 fi
 
-echo "docker run --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}"
-docker run --name rancher-server --restart=unless-stopped --privileged -p 8080:80 $IMAGE
+echo "docker run -d --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}"
+docker run -d --name rancher-server --restart=unless-stopped --privileged -p 8080:80 $IMAGE
+
+
+echo "Waiting randomly for 20 seconds"
+sleep 20
+
+echo "DOCKER CONTAINER LS"
+docker container ls
+
+mkdir -p /etc/rancher/k3s/
+docker cp rancher-server:/etc/rancher/k3s/k3s.yaml /etc/rancher/k3s/k3s.yaml
