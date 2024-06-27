@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "---- Running scripts/retry -----"
+
 cmd=""
 timeoutSeconds=60
 sleepSeconds=1
@@ -52,6 +54,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             cmd="$@"
+            echo "Received command '${cmd}'"
             break
             ;;
     esac
@@ -65,7 +68,7 @@ if [ -z "$cmd" ]; then
 fi
 
 # Loop until either the command succeeds or a timeout occurs.
-until [ "$elapsedSeconds" -gt "$timeoutSeconds" ] || eval "$cmd"; do
+until [ "$elapsedSeconds" -gt "$timeoutSeconds" ] || eval "$cmd" 2>&1 | sed 's/^/[PREFIX] /' | tee /dev/fd/2; do
     sleep "$sleepSeconds"
 
     # Increment attempt counter. If we've hit the message interval, print the message
