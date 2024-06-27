@@ -139,10 +139,6 @@ trap cleanup exit
 echo "Waiting for Rancher to be healthy"
 ./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
 
-echo "Searching for k3s.yaml"
-sudo find / -name "k3s.yaml"
-echo "Finished search"
-
 echo "Waiting up to 5 minutes for rancher-webhook deployment"
 ./scripts/retry \
   --timeout 300 `# Time out after 300 seconds (5 min)` \
