@@ -137,7 +137,7 @@ run_rancher &
 sleep 7
 echo "----------- AFTER"
 RANCHER_RUN_PID=$!
-trap exit
+#trap cleanup exit
 
 echo "Waiting for Rancher to be healthy"
 ./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
