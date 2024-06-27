@@ -68,7 +68,7 @@ if [ -z "$cmd" ]; then
 fi
 
 # Loop until either the command succeeds or a timeout occurs.
-until [ "$elapsedSeconds" -gt "$timeoutSeconds" ] || eval "$cmd" 2>&1 | sed 's/^/[PREFIX] /' | tee /dev/fd/2; do
+until [ "$elapsedSeconds" -gt "$timeoutSeconds" ] || eval "$cmd"; do
     sleep "$sleepSeconds"
 
     # Increment attempt counter. If we've hit the message interval, print the message
