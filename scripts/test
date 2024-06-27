@@ -136,13 +136,11 @@ run_rancher &
 RANCHER_RUN_PID=$!
 trap cleanup exit
 
+docker cp rancher-server:/etc/rancher/k3s/k3s.yaml /etc/rancher/k3s/k3s.yaml
+
 echo "Waiting for Rancher to be healthy"
 ./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
 
-echo "Searching for k3s.yaml"
-echo "PWD: $(pwd)"
-sudo find / -name "k3s.yaml"
-echo "Finished search"
 
 echo "Waiting up to 5 minutes for rancher-webhook deployment"
 ./scripts/retry \
@@ -150,7 +148,7 @@ echo "Waiting up to 5 minutes for rancher-webhook deployment"
   --sleep 2 `# Sleep for 2 seconds in between attempts` \
   --message-interval 30 `# Print the progress message below every 30 attempts (roughly every minute)` \
   --message "rancher-webhook was not available after {{elapsed}} seconds" `# Print this progress message` \
-  "kubectl --kubeconfig /go/src/github.com/rancher/rancher/.kube/k3s.yaml rollout status -w -n cattle-system deploy/rancher-webhook &"
+  "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-system deploy/rancher-webhook &"
 
 echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
 ./scripts/retry \
@@ -158,7 +156,7 @@ echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
   --sleep 2 `# Sleep for 2 seconds in between attempts` \
   --message-interval 30 `# Print the progress message below every 30 attempts (roughly every minute)` \
   --message "rancher-provisioning-capi was not available after {{elapsed}} seconds" `# Print this progress message` \
-  "kubectl --kubeconfig /go/src/github.com/rancher/rancher/.kube/k3s.yaml rollout status -w -n cattle-provisioning-capi-system deploy/capi-controller-manager &"
+  "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-provisioning-capi-system deploy/capi-controller-manager &"
 
 #kill $TPID
 
