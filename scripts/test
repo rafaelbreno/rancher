@@ -136,6 +136,9 @@ run_rancher &
 RANCHER_RUN_PID=$!
 trap cleanup exit
 
+echo "DOCKER CONTAINER LS"
+docker container ls
+
 mkdir -p /etc/rancher/k3s/
 docker cp rancher-server:/etc/rancher/k3s/k3s.yaml /etc/rancher/k3s/k3s.yaml
 
