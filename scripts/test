@@ -132,19 +132,14 @@ trap "exit 1" 42
 PWRAPPROC="$$"
 
 PID=-1
-run_rancher &
+echo "----------- BEFORE"
+run_rancher
+echo "----------- AFTER"
 RANCHER_RUN_PID=$!
 trap cleanup exit
 
-echo "DOCKER CONTAINER LS"
-docker container ls
-
-mkdir -p /etc/rancher/k3s/
-docker cp rancher-server:/etc/rancher/k3s/k3s.yaml /etc/rancher/k3s/k3s.yaml
-
 echo "Waiting for Rancher to be healthy"
 ./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
-
 
 echo "Waiting up to 5 minutes for rancher-webhook deployment"
 ./scripts/retry \
