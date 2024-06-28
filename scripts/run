@@ -46,8 +46,8 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
   sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
 fi
 
-echo "docker run -d --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}"
-docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:6443 -p 8080:80 -e CATTLE_BOOTSTRAP_PASSWORD="admin" $IMAGE
+echo "docker run -d --name rancher-server --restart=unless-stopped --privileged -p 443:443 -p 80:80 -e CATTLE_BOOTSTRAP_PASSWORD="admin" $IMAGE"
+docker run -d --name rancher-server --restart=unless-stopped --privileged -p 443:443 -p 80:80 -e CATTLE_BOOTSTRAP_PASSWORD="admin" $IMAGE
 
 sleep 5
 
