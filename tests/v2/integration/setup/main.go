@@ -66,7 +66,8 @@ func main() {
 			Password: "admin",
 		}, hostURL)
 		if err != nil {
-			return false, nil
+			logrus.Errorf("Pool error: %w", err)
+			return false, err
 		}
 
 		return true, nil
