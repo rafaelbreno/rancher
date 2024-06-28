@@ -56,6 +56,10 @@ func main() {
 		logrus.Fatalf("Error getting outbound IP address: %v", err)
 	}
 
+	fmt.Println("-------------- Outbound IP---------------")
+	fmt.Println(">", ipAddress.String())
+	fmt.Println("-----------------------------")
+
 	hostURL := fmt.Sprintf("%s:8443", ipAddress.String())
 
 	var userToken *management.Token
@@ -66,7 +70,8 @@ func main() {
 			Password: "admin",
 		}, hostURL)
 		if err != nil {
-			return false, nil
+			logrus.Errorf("Pool error: %w", err)
+			return false, err
 		}
 
 		return true, nil
