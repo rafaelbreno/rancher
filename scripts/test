@@ -150,7 +150,7 @@ echo "Waiting up to 5 minutes for rancher-webhook deployment"
   --message "rancher-webhook was not available after {{elapsed}} seconds" `# Print this progress message` \
   "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-system deploy/rancher-webhook &"
 
-exit "AAAAAAAAAAAAAAAAAAA"
+echo "-------------- 1 ------------------"
 
 echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
 ./scripts/retry \
@@ -159,6 +159,8 @@ echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
   --message-interval 30 `# Print the progress message below every 30 attempts (roughly every minute)` \
   --message "rancher-provisioning-capi was not available after {{elapsed}} seconds" `# Print this progress message` \
   "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-provisioning-capi-system deploy/capi-controller-manager &"
+
+echo "-------------- 2 ------------------"
 
 #kill $TPID
 
