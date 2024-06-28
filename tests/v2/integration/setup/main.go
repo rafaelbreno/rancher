@@ -60,7 +60,7 @@ func main() {
 	//fmt.Println(">", ipAddress.String())
 	//fmt.Println("-----------------------------")
 
-	hostURL := fmt.Sprintf("%s:8443", "localhost")
+	hostURL := fmt.Sprintf("%s:6443", "localhost")
 
 	var userToken *management.Token
 
