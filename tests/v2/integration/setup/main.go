@@ -51,16 +51,17 @@ func main() {
 	}
 
 	logrus.Infof("Generating test config")
-	//ipAddress, err := getOutboundIP()
-	//if err != nil {
-	//logrus.Fatalf("Error getting outbound IP address: %v", err)
-	//}
+	// ipAddress, err := getOutboundIP()
+	// if err != nil {
+	// 	logrus.Fatalf("Error getting outbound IP address: %v", err)
+	// }
 
-	//fmt.Println("-------------- Outbound IP---------------")
-	//fmt.Println(">", ipAddress.String())
-	//fmt.Println("-----------------------------")
+	// fmt.Println("-------------- Outbound IP---------------")
+	// fmt.Println(">", ipAddress.String())
+	// fmt.Println("-----------------------------")
 
-	hostURL := fmt.Sprintf("%s:6443", "localhost")
+	// hostURL := "localhost"
+	hostURL := fmt.Sprintf("%s:443", "localhost")
 
 	var userToken *management.Token
 
