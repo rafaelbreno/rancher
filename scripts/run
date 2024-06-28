@@ -47,7 +47,7 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
 fi
 
 echo "docker run -d --name rancher-server --restart=unless-stopped -p 8080:80 ${IMAGE}"
-docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:6443 -p 8080:80 -e CATTLE_BOOTSTRAP_PASSWORD=admin $IMAGE &
+docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:6443 -p 8080:80 -e CATTLE_BOOTSTRAP_PASSWORD="admin" $IMAGE
 
 sleep 5
 
