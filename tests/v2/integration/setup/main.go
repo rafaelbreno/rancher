@@ -56,6 +56,10 @@ func main() {
 		logrus.Fatalf("Error getting outbound IP address: %v", err)
 	}
 
+	fmt.Println("-------------- Outbound IP---------------")
+	fmt.Println(">", ipAddress.String())
+	fmt.Println("-----------------------------")
+
 	hostURL := fmt.Sprintf("%s:8443", ipAddress.String())
 
 	var userToken *management.Token
