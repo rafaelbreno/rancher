@@ -71,7 +71,7 @@ func main() {
 		}, hostURL)
 		if err != nil {
 			logrus.Errorf("Pool error: %w", err)
-			return false, err
+			return false, nil
 		}
 
 		return true, nil
