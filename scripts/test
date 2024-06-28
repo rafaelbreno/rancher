@@ -75,6 +75,8 @@ fi
 echo Starting rancher server for test
 touch /tmp/rancher.log
 
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
 mkdir -p /var/lib/rancher/$DIST/agent/images
 grep PodTestImage ./tests/v2prov/defaults/defaults.go | cut -f2 -d'"' > /var/lib/rancher/$DIST/agent/images/pull.txt
 grep MachineProvisionImage ./pkg/settings/setting.go | cut -f4 -d'"' >> /var/lib/rancher/$DIST/agent/images/pull.txt
