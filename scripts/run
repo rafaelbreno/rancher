@@ -3,19 +3,13 @@ set -e
 
 echo Starting rancher server
 
-echo "scripts/run"
-#echo "  $(pwd)"
-#echo "  $(ls -al)"
-
 source $(dirname $0)/version
 source $(dirname $0)/export-config
 cd scripts
 source ./package-env
 cd ..
 
-
 cd $(dirname $0)/..
-#echo "  2: $(pwd)"
 
 if [ ! -z $1 ] && ( [ $1 = "--trace" ] || [ $1 = "--info" ] || [ $1 = "--debug" ] ); then
   LOGFLAG=$1
@@ -24,7 +18,7 @@ fi
 rm -rf build/testdata
 mkdir -p build/testdata
 cd build/testdata
-export KUBECONFIG=
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 export CATTLE_DEV_MODE=yes
 export CATTLE_SERVER_URL="https://$(ip route get 8.8.8.8 | awk '{print $7}'):8443"
 export CATTLE_BOOTSTRAP_PASSWORD="admin"
@@ -47,7 +41,15 @@ export CATTLE_FEATURES="harvester=false"
 #fi
 
 echo "docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:443 -p 8080:80 -e CATTLE_BOOTSTRAP_PASSWORD="admin" $IMAGE"
-docker run -d --name rancher-server --restart=unless-stopped --privileged -p 443:443 -p 6443:6443 -p 8080:8080 -e CATTLE_BOOTSTRAP_PASSWORD="admin" -e CATTLE_DEV_MODE=yes $IMAGE
+docker run -d --name rancher-server \
+  --restart=unless-stopped --privileged \
+  -p 443:443 -p 6443:6443 -p 8080:8080 \
+  -e CATTLE_DEV_MODE=$CATTLE_DEV_MODE \
+  -e CATTLE_BOOTSTRAP_PASSWORD=$CATTLE_BOOTSTRAP_PASSWORD \
+  -e CATTLE_FEATURES=$CATTLE_FEATURES \
+  -e CATTLE_SERVER_URL=$CATTLE_SERVER_URL \
+  -e KUBECONFIG=$KUBECONFIG \
+  $IMAGE
 
 sleep 5
 
