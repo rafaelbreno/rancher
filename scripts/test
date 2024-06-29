@@ -137,6 +137,9 @@ RANCHER_RUN_PID=$!
 echo "Waiting for Rancher to be healthy"
 ./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
 
+# with healthy rancher we can copy over the certs
+
+
 echo "Waiting up to 5 minutes for rancher-webhook deployment"
 ./scripts/retry \
   --timeout 300 `# Time out after 300 seconds (5 min)` \
