@@ -273,6 +273,17 @@ jobs:
           #docker pull rancher/rancher:v2.8-head
           #docker run -d --name rancher-server --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher:v2.8-head
         ##run: docker create --name rancher-container rancher/rancher:v2.8-head && docker cp rancher-container:/usr/bin/rancher ./bin/rancher && docker rm rancher-container
+        #
+      - name: Versions
+        run: |
+          echo "--------------------"
+          docker version
+          echo "--------------------"
+          kubectl version
+          echo "--------------------"
+          k3s --version
+          echo "--------------------"
+
 
       - name: Run tests
         run: sudo -E ./scripts/entry ci
