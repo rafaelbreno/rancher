@@ -146,7 +146,7 @@ echo "Waiting up to 5 minutes for rancher-webhook deployment"
   --sleep 2 `# Sleep for 2 seconds in between attempts` \
   --message-interval 30 `# Print the progress message below every 30 attempts (roughly every minute)` \
   --message "rancher-webhook was not available after {{elapsed}} seconds" `# Print this progress message` \
-  "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-system deploy/rancher-webhook &"
+  "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-system deploy/rancher-webhook &>/dev/null"
 
 echo "-------------- 1 ------------------"
 
@@ -156,16 +156,16 @@ echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
   --sleep 2 `# Sleep for 2 seconds in between attempts` \
   --message-interval 30 `# Print the progress message below every 30 attempts (roughly every minute)` \
   --message "rancher-provisioning-capi was not available after {{elapsed}} seconds" `# Print this progress message` \
-  "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-provisioning-capi-system deploy/capi-controller-manager &"
+  "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-provisioning-capi-system deploy/capi-controller-manager &>/dev/null"
 
 echo "-------------- 2 ------------------"
 
 echo "Sleeping for 20"
 sleep 20
 
-echo "Printing current kubectl thingies"
-kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get deployments --all-namespaces -o custom-columns=Namespace:.metadata.namespace,Name:.metadata.name,Replicas:.spec.replicas,Available:.status.availableReplicas
-kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get pods --all-namespaces -o custom-columns=Namespace:.metadata.namespace,Name:.metadata.name,Status:.status.phase,Node:.spec.nodeName
+#echo "Printing current kubectl thingies"
+#kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get deployments --all-namespaces -o custom-columns=Namespace:.metadata.namespace,Name:.metadata.name,Replicas:.spec.replicas,Available:.status.availableReplicas
+#kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get pods --all-namespaces -o custom-columns=Namespace:.metadata.namespace,Name:.metadata.name,Status:.status.phase,Node:.spec.nodeName
 
 #kill $TPID
 
