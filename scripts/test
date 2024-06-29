@@ -129,7 +129,7 @@ PWRAPPROC="$$"
 PID=-1
 echo "----------- BEFORE"
 run_rancher &
-sleep 7
+sleep 10
 echo "----------- AFTER"
 RANCHER_RUN_PID=$!
 #trap cleanup exit

@@ -56,3 +56,11 @@ docker container ls
 
 mkdir -p /etc/rancher/k3s/
 docker cp rancher-server:/etc/rancher/k3s/k3s.yaml /etc/rancher/k3s/k3s.yaml
+
+
+mkdir -p /usr/local/share/ca-certificates/
+
+docker cp rancher-server:/var/lib/rancher/k3s/server/tls/client-ca.crt /usr/local/share/ca-certificates/client-ca.crt
+
+echo "Updating certificates"
+update-ca-certificates
