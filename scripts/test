@@ -139,6 +139,16 @@ RANCHER_RUN_PID=$!
 
 # with healthy rancher we can copy over the certs
 
+echo "Versions:"
+
+echo "--------- Docker ------------"
+docker version
+echo "--------- Kubectl -----------"
+kubectl version
+echo "--------- K3s ---------------"
+k3s --version
+echo "--------------------"
+
 
 echo "Waiting up to 5 minutes for rancher-webhook deployment"
 ./scripts/retry \
