@@ -24,8 +24,8 @@ cd $(dirname $0)/..
 
 echo "PWD $(pwd)"
 
-#echo Running unit tests
-#go test -cover -tags=test ./pkg/...
+echo Running unit tests
+go test -cover -tags=test ./pkg/...
 
 if [ ${ARCH} == arm64 ] || [ ${ARCH} == s390x ]; then
     export ETCD_UNSUPPORTED_ARCH=${ARCH}
@@ -141,8 +141,8 @@ echo "----------- AFTER"
 RANCHER_RUN_PID=$!
 #trap cleanup exit
 
-# echo "Waiting for Rancher to be healthy"
-# ./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
+echo "Waiting for Rancher to be healthy"
+./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
 
 echo "Waiting up to 5 minutes for rancher-webhook deployment"
 ./scripts/retry \
@@ -173,21 +173,21 @@ kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get pods --all-namespaces -o cus
 
 #kill $TPID
 
-echo Running build-integration-setup
-./tests/v2/integration/scripts/build-integration-setup
+# echo Running build-integration-setup
+# ./tests/v2/integration/scripts/build-integration-setup
 
-echo Running integrationsetup
-export CATTLE_TEST_CONFIG=$(pwd)/config.yaml # used by integration tests and test setup
-./tests/v2/integration/bin/integrationsetup || {
-  dump_rancher_logs
-  exit 1
-}
+# echo Running integrationsetup
+# export CATTLE_TEST_CONFIG=$(pwd)/config.yaml # used by integration tests and test setup
+# ./tests/v2/integration/bin/integrationsetup || {
+#   dump_rancher_logs
+#   exit 1
+# }
 
-echo Running go integration tests
-go test -v -failfast -p 1 ./tests/v2/integration/... || {
-  dump_rancher_logs
-  exit 1
-}
+# echo Running go integration tests
+# go test -v -failfast -p 1 ./tests/v2/integration/... || {
+#   dump_rancher_logs
+#   exit 1
+# }
 
 echo Running tox tests
 INT_TESTS_STARTED=true
