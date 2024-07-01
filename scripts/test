@@ -122,15 +122,13 @@ trap "exit 1" 42
 PWRAPPROC="$$"
 
 PID=-1
-echo "----------- BEFORE"
 run_rancher &
-sleep 7
-echo "----------- AFTER"
+sleep 10
 RANCHER_RUN_PID=$!
 #trap cleanup exit
 
-echo "Waiting for Rancher to be healthy"
-./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
+#echo "Waiting for Rancher to be healthy"
+#./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
 
 echo "Waiting up to 5 minutes for rancher-webhook deployment"
 ./scripts/retry \
@@ -155,27 +153,23 @@ echo "-------------- 2 ------------------"
 echo "Sleeping for 20"
 sleep 20
 
-echo "Printing current kubectl thingies"
-kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get deployments --all-namespaces -o custom-columns=Namespace:.metadata.namespace,Name:.metadata.name,Replicas:.spec.replicas,Available:.status.availableReplicas
-kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get pods --all-namespaces -o custom-columns=Namespace:.metadata.namespace,Name:.metadata.name,Status:.status.phase,Node:.spec.nodeName
-
 #kill $TPID
 
-# echo Running build-integration-setup
-# ./tests/v2/integration/scripts/build-integration-setup
+ echo Running build-integration-setup
+ ./tests/v2/integration/scripts/build-integration-setup
 
-# echo Running integrationsetup
-# export CATTLE_TEST_CONFIG=$(pwd)/config.yaml # used by integration tests and test setup
-# ./tests/v2/integration/bin/integrationsetup || {
-#   dump_rancher_logs
-#   exit 1
-# }
+ echo Running integrationsetup
+ export CATTLE_TEST_CONFIG=$(pwd)/config.yaml # used by integration tests and test setup
+ ./tests/v2/integration/bin/integrationsetup || {
+   dump_rancher_logs
+   exit 1
+ }
 
-# echo Running go integration tests
-# go test -v -failfast -p 1 ./tests/v2/integration/... || {
-#   dump_rancher_logs
-#   exit 1
-# }
+ echo Running go integration tests
+ go test -v -failfast -p 1 ./tests/v2/integration/... || {
+   dump_rancher_logs
+   exit 1
+ }
 
 echo Running tox tests
 INT_TESTS_STARTED=true
