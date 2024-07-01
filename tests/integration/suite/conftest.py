@@ -38,7 +38,7 @@ def get_ip():
     return IP
 
 
-IP = get_ip()
+IP = "localhost"
 SERVER_URL = os.environ.get('CATTLE_TEST_URL', 'https://' + IP + ':8443')
 SERVER_PASSWORD = os.environ.get('RANCHER_SERVER_PASSWORD', 'admin')
 BASE_URL = SERVER_URL + '/v3'
