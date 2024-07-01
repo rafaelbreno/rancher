@@ -127,28 +127,10 @@ trap "exit 1" 42
 PWRAPPROC="$$"
 
 PID=-1
-echo "----------- BEFORE"
 run_rancher &
 sleep 10
-echo "----------- AFTER"
 RANCHER_RUN_PID=$!
 #trap cleanup exit
-
-#echo "Waiting for Rancher to be healthy"
-#./scripts/retry --sleep 2 "curl -sf -o /dev/null http://localhost:8080/ping"
-
-# with healthy rancher we can copy over the certs
-
-echo "Versions:"
-
-echo "--------- Docker ------------"
-docker version
-echo "--------- Kubectl -----------"
-kubectl version
-echo "--------- K3s ---------------"
-k3s --version
-echo "--------------------"
-
 
 echo "Waiting up to 5 minutes for rancher-webhook deployment"
 ./scripts/retry \
@@ -158,8 +140,6 @@ echo "Waiting up to 5 minutes for rancher-webhook deployment"
   --message "rancher-webhook was not available after {{elapsed}} seconds" `# Print this progress message` \
   "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-system deploy/rancher-webhook &"
 
-echo "-------------- 1 ------------------"
-
 echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
 ./scripts/retry \
   --timeout 300 `# Time out after 300 seconds (5 min)` \
@@ -168,14 +148,8 @@ echo "Waiting up to 5 minutes for rancher-provisioning-capi deployment"
   --message "rancher-provisioning-capi was not available after {{elapsed}} seconds" `# Print this progress message` \
   "kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status -w -n cattle-provisioning-capi-system deploy/capi-controller-manager &>/dev/null"
 
-echo "-------------- 2 ------------------"
-
 echo "Sleeping for 20"
 sleep 20
-
-#echo "Printing current kubectl thingies"
-#kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get deployments --all-namespaces -o custom-columns=Namespace:.metadata.namespace,Name:.metadata.name,Replicas:.spec.replicas,Available:.status.availableReplicas
-#kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml  get pods --all-namespaces -o custom-columns=Namespace:.metadata.namespace,Name:.metadata.name,Status:.status.phase,Node:.spec.nodeName
 
 #kill $TPID
 
