@@ -2,14 +2,15 @@ from flask import request
 from flask import Flask
 from threading import Thread
 from werkzeug.serving import make_server
+from conftest import LOCAL_IP
 
 
 class MockServer(Thread):
     def __init__(self, port=5000):
         self.port = port
         self.app = Flask(__name__)
-        self.server = make_server('127.0.0.1', self.port, self.app)
-        self.url = "http://127.0.0.1:%s" % self.port
+        self.server = make_server(LOCAL_IP, self.port, self.app)
+        self.url = "http://%s:%s" % LOCAL_IP, self.port
         self.thread = None
 
     def stop(self):
