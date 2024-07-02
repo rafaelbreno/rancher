@@ -3,7 +3,7 @@ from rancher import ApiError
 from .common import random_str
 from .conftest import wait_for
 from .alert_common import MockReceiveAlert
-from conftest import LOCAL_IP
+from .alert_common import LOCAL_IP
 
 dingtalk_config = {
     "type": "/v3/schemas/dingtalkConfig",
