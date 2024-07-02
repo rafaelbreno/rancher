@@ -12,7 +12,6 @@ dingtalk_config = {
 
 microsoft_teams_config = {
     "type": "/v3/schemas/msTeamsConfig",
-    "url": "http://127.0.0.1:4050/microsoftTeams",
     "url": "http://%s:4050/microsoftTeams" % LOCAL_IP,
 }
 
