@@ -19,6 +19,7 @@ def get_ip():
 
 LOCAL_IP = get_ip()
 
+
 class MockServer(Thread):
     def __init__(self, port=5000):
         self.port = port
