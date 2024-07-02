@@ -26,7 +26,7 @@ class MockServer(Thread):
         self.port = port
         self.app = Flask(__name__)
         self.server = make_server(LOCAL_IP, self.port, self.app)
-        self.url = "http://%s:%s" % LOCAL_IP, self.port
+        self.url = "http://%s:%s" % (LOCAL_IP, self.port)
         self.thread = None
 
     def stop(self):

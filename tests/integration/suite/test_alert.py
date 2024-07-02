@@ -12,7 +12,7 @@ dingtalk_config = {
 
 microsoft_teams_config = {
     "type": "/v3/schemas/msTeamsConfig",
-    "url": "http://%s:4050:4050/microsoftTeams" % LOCAL_IP,
+    "url": "http://%s:4050/microsoftTeams" % LOCAL_IP,
 }
 
 MOCK_RECEIVER_ALERT_PORT = 4050
