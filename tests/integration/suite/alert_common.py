@@ -17,6 +17,7 @@ def get_ip():
         s.close()
     return IP
 
+
 LOCAL_IP = get_ip()
 
 
