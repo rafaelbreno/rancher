@@ -4,7 +4,6 @@ import requests
 import time
 import urllib3
 import yaml
-import socket
 import subprocess
 import json
 import rancher
