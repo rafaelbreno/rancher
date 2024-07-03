@@ -2,12 +2,20 @@
 set -e
 
 echo Starting rancher server
-cd $(dirname $0)/..
 
-CMD=bin/rancher
-if [ ! -x $CMD ]; then
-    ./scripts/build-server
-fi
+echo "scripts/run"
+#echo "  $(pwd)"
+#echo "  $(ls -al)"
+
+source $(dirname $0)/version
+source $(dirname $0)/export-config
+cd scripts
+source ./package-env
+cd ..
+
+
+cd $(dirname $0)/..
+#echo "  2: $(pwd)"
 
 if [ ! -z $1 ] && ( [ $1 = "--trace" ] || [ $1 = "--info" ] || [ $1 = "--debug" ] ); then
   LOGFLAG=$1
@@ -29,35 +37,22 @@ export CATTLE_FEATURES="harvester=false"
 # Moby License Apache 2.0: https://github.com/moby/moby/blob/ed89041433a031cafc0a0f19cfe573c31688d377/LICENSE                           #
 #########################################################################################################################################
 # only run this if rancher is not running in kubernetes cluster
-if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
-  # move the processes from the root group to the /init group,
-  # otherwise writing subtree_control fails with EBUSY.
-  mkdir -p /sys/fs/cgroup/init
-  xargs -rn1 < /sys/fs/cgroup/cgroup.procs > /sys/fs/cgroup/init/cgroup.procs || :
-  # enable controllers
-  sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
-fi
+# if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
+#   # move the processes from the root group to the /init group,
+#   # otherwise writing subtree_control fails with EBUSY.
+#   mkdir -p /sys/fs/cgroup/init
+#   xargs -rn1 < /sys/fs/cgroup/cgroup.procs > /sys/fs/cgroup/init/cgroup.procs || :
+#   # enable controllers
+#   sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
+# fi
 
-if [ $CI ]; then
-  # DISCLAIMER
-  # This code relies on the fact that our CI pipleine runs on one system at a time. Currently with drone this means that the setting `DRONE_AGENT_CONCURRENCY=1`
+echo "docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:443 -p 8080:80 -e CATTLE_BOOTSTRAP_PASSWORD="admin" $IMAGE"
+docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:6443 -p 8080:8080 -p 443:443 -e CATTLE_BOOTSTRAP_PASSWORD="admin" -e CATTLE_DEV_MODE=yes $IMAGE
 
-  # Attempt to find and stop any previous instances of dapper containers.
-  # To combat the scenario where drone runners are reused and an instance of rancher is still running.
-  echo "Checking for running containers from a previous build."
+sleep 5
 
-  # gets a list of all docker containers that were started in a CI build.
-  dapper_containers=$(docker ps --format '{{.Names}}/{{.Label "DRONE_BUILD_NUMBER"}}' --filter 'label=CI=true')
-  for container_info in $dapper_containers; do
-    IFS='/' read -ra split_info <<<"$container_info"
+echo "DOCKER CONTAINER LS"
+docker container ls
 
-    # remove containers that were not created in this build
-    if [ "${split_info[1]}" != "${DRONE_BUILD_NUMBER}" ]; then
-      echo "Removing old drone container ${split_info[0]}"
-      docker stop ${split_info[0]}
-      docker rm ${split_info[0]}
-    fi
-  done
-fi
-
-exec ../../$CMD $LOGFLAG
+mkdir -p /etc/rancher/k3s/
+docker cp rancher-server:/etc/rancher/k3s/k3s.yaml /etc/rancher/k3s/k3s.yaml
