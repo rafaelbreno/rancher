@@ -1,8 +1,8 @@
 #!/bin/bash
 echo "Checking if we can skip CI because of an only UI/dashboard change"
-echo "Environment variable DRONE_BUILD_EVENT is ${DRONE_BUILD_EVENT}"
+echo "Environment variable BUILD_EVENT is ${BUILD_EVENT}"
 # Only run check if Drone build event is 'push' or 'pull_request'
-if [ "${DRONE_BUILD_EVENT}" = "push" ] || [ "${DRONE_BUILD_EVENT}" = "pull_request" ]; then
+if [ "${BUILD_EVENT}" = "push" ] || [ "${BUILD_EVENT}" = "pull_request" ]; then
     # Check if there is only one changed file and if its 'package/Dockerfile'
     if [ $(git diff HEAD~1 --name-only | wc -l) -eq 1 ] && [ $(git diff HEAD~1 --name-only) = "package/Dockerfile" ]; then
         echo "Only package/Dockerfile changes found"

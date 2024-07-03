@@ -34,6 +34,7 @@ jobs:
       YQ_VERSION: v4.40.2
       PYTHON_VERSION: '^3.11'
       GOLANG_VERSION: '^1.21'
+      BUILD_EVENT: '${{ github.event_name }}'
 
     steps:
       - name: Checkout code
