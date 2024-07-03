@@ -39,16 +39,16 @@ func main() {
 	}
 
 	logrus.Infof("Generating test config")
-	ipAddress, err := getOutboundIP()
-	if err != nil {
-		logrus.Fatalf("Error getting outbound IP address: %v", err)
-	}
+	// ipAddress, err := getOutboundIP()
+	// if err != nil {
+	// 	logrus.Fatalf("Error getting outbound IP address: %v", err)
+	// }
 
-	hostURL := fmt.Sprintf("%s:8443", ipAddress.String())
+	hostURL := fmt.Sprintf("%s:443", "localhost")
 
 	var userToken *management.Token
 
-	err = kwait.Poll(500*time.Millisecond, 5*time.Minute, func() (done bool, err error) {
+	err := kwait.Poll(500*time.Millisecond, 5*time.Minute, func() (done bool, err error) {
 		userToken, err = token.GenerateUserToken(&management.User{
 			Username: "admin",
 			Password: "admin",
