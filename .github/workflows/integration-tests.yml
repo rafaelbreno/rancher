@@ -1,7 +1,17 @@
 name: Unit and Integration Tests
 on:
   workflow_dispatch:
-
+  push:
+    branches:
+      - master
+      - release/v*
+      - refs/tags/v*
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - master
+      - release/v*
 jobs:
   unit-test:
     runs-on: ubuntu-latest
