@@ -30,12 +30,24 @@ export CATTLE_FEATURES="harvester=false"
 #########################################################################################################################################
 # only run this if rancher is not running in kubernetes cluster
 if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
+  echo 1111111111111
   # move the processes from the root group to the /init group,
   # otherwise writing subtree_control fails with EBUSY.
   mkdir -p /sys/fs/cgroup/init
-  xargs -rn1 < /sys/fs/cgroup/cgroup.procs > /sys/fs/cgroup/init/cgroup.procs || :
+
+  echo Validating paths:
+  ls -l /sys/fs/cgroup/cgroup.procs
+  ls -l /sys/fs/cgroup/init/cgroup.procs
+  echo Done validating paths:
+
+  echo Moving processes to /init cgroup:
+  while read -r pid; do
+    echo "Moving PID $pid"
+    sudo sh -c "echo $pid > /sys/fs/cgroup/init/cgroup.procs" || echo "Failed to move PID $pid"
+  done < /sys/fs/cgroup/cgroup.procs
+
   # enable controllers
-  sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" >"/sys/fs/cgroup/cgroup.subtree_control"
+  sed -e 's/ / +/g' -e 's/^/+/' <"/sys/fs/cgroup/cgroup.controllers" | sudo tee "/sys/fs/cgroup/cgroup.subtree_control"
 fi
 
 if [ $CI ]; then
@@ -60,4 +72,4 @@ if [ $CI ]; then
   done
 fi
 
-exec ../../$CMD $LOGFLAG
+#exec ../../$CMD $LOGFLAG
