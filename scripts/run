@@ -26,7 +26,7 @@ mkdir -p build/testdata
 cd build/testdata
 export KUBECONFIG=
 export CATTLE_DEV_MODE=yes
-export CATTLE_SERVER_URL="https://$(ip route get 8.8.8.8 | awk '{print $7}'):8443"
+export CATTLE_SERVER_URL="https://$(ip route get 8.8.8.8 | awk '{print $7}')"
 export CATTLE_BOOTSTRAP_PASSWORD="admin"
 export CATTLE_FEATURES="harvester=false"
 
@@ -47,7 +47,7 @@ export CATTLE_FEATURES="harvester=false"
 # fi
 
 echo "docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:443 -p 8080:80 -e CATTLE_BOOTSTRAP_PASSWORD="admin" $IMAGE"
-docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:6443 -p 8080:8080 -p 443:443 -e CATTLE_BOOTSTRAP_PASSWORD="admin" -e CATTLE_DEV_MODE=yes $IMAGE
+docker run -d --name rancher-server --restart=unless-stopped --privileged -p 6443:6443 -p 8080:8080 -p 443:443 -e CATTLE_SERVER_URL=$CATTLE_SERVER_URL -e CATTLE_BOOTSTRAP_PASSWORD="admin" -e CATTLE_DEV_MODE=yes -e CATTLE_AGENT_IMAGE=$AGENT_IMAGE $IMAGE
 
 sleep 5
 
