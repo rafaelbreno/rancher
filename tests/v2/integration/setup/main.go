@@ -75,23 +75,32 @@ func main() {
 
 	testSession := session.NewSession()
 
-	client, err := rancherClient.NewClient("", testSession)
-	if err != nil {
-		logrus.Fatalf("error creating admin client: %v", err)
-	}
+	var client *rancherClient.Client
 
 	agentSetting := &v3.Setting{}
+	var agentSettingError error
+	var agentSettingResp *v1.SteveAPIObject
+	err = kwait.PollUntilContextTimeout(context.TODO(), 500*time.Millisecond, 5*time.Minute, true, func(ctx context.Context) (done bool, err error) {
+		client, err = rancherClient.NewClient("", testSession)
+		if err != nil {
+			return false, err
+		}
 
-	agentSettingResp, err := client.Steve.SteveType("management.cattle.io.setting").ByID("agent-image")
+		agentSettingResp, err = client.Steve.SteveType("management.cattle.io.setting").ByID("agent-image")
+		if err != nil {
+			agentSettingError = err
+			return false, nil
+		}
+		return true, nil
+	})
 	if err != nil {
-		logrus.Fatalf("error get agent-image setting: %v", err)
+		logrus.Fatalf("error get agent-image setting: %v", agentSettingError)
 	}
 
 	err = v1.ConvertToK8sType(agentSettingResp.JSONResp, agentSetting)
 	if err != nil {
 		logrus.Fatalf("error converting to k8s type: %v", err)
 	}
-
 	agentSetting.Value = agentImage
 
 	_, err = client.Steve.SteveType("management.cattle.io.setting").Update(agentSettingResp, agentSetting)
@@ -101,7 +110,7 @@ func main() {
 
 	_, err = k3d.CreateAndImportK3DCluster(client, clusterName, agentImage, "", 1, 0, true)
 	if err != nil {
-		logrus.Infof("error creating and importing a k3d cluster: %v", err)
+		logrus.Fatalf("error creating and importing a k3d cluster: %v", err)
 	}
 }
 
