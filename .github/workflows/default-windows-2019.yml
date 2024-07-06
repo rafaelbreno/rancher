@@ -237,14 +237,8 @@ jobs:
           sudo pip3 install --upgrade pip
           sudo pip3 install tox flake8
 
-      #- name: Setting up Rancher
-        #run: |
-          #docker pull rancher/rancher:v2.8-head
-          #docker run -d --name rancher-server --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher:v2.8-head
-        ##run: docker create --name rancher-container rancher/rancher:v2.8-head && docker cp rancher-container:/usr/bin/rancher ./bin/rancher && docker rm rancher-container
-
       - name: Build Docker Images
-        run: sudo -E ./scripts/entry ci
+        run: sudo -E ./scripts/entry gha-build
 
       - name: Save Docker images to files
         run: |
@@ -343,4 +337,4 @@ jobs:
           sudo pip3 install --upgrade pip
           sudo pip3 install tox flake8
       - name: Run Tests
-        run: sudo -E ./scripts/entry temp
+        run: sudo -E ./scripts/entry gha-integration-tests
